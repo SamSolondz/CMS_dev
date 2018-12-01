@@ -1,10 +1,19 @@
 #include "em_device.h"
 #include "em_chip.h"
+
+#include "adc_defines.h"
 #include "spidrv.h"
 #include "spidrv_config.h"
 #include "rtcdriver.h"
 #include "rtcdrv_config.h"
-#include "gpio.h"
+#include "em_gpio.h"
+#include "stdint.h"
+#include "stdio.h"
+
+typedef int bool;
+#define true 1
+#define false 0
+
 
 SPIDRV_HandleData_t handleData;
 SPIDRV_Handle_t handle = &handleData;
@@ -20,28 +29,42 @@ void spidrv_setup(){
 	CMU_ClockEnable(cmuClock_GPIO, true);
 
 
+	//Set PIN to monitor ADC (!RDY)
+	GPIO_PinModeSet(gpioPortA, 5, gpioModeInput); //TODO: pullup setting?
 
+	//Initialize and enable SPIDRV
 	SPIDRV_Init_t initData = SPIDRV_MASTER_USART0;
+	initData.clockMode = spidrvClockMode3;
+	//initData.csControl = spidrvCsControlApplication 	// makes SPIDRV not automatically set CS pin
+
 	//Initialize a SPI driver instance
 	SPIDRV_Init(handle, &initData);
 
 };
 
+
 int main(void)
 {
   /* Chip errata */
   CHIP_Init();
+  spidrv_setup();
+  setup_utilities();
+  delay(100);
 
-  enter_DefaultMode_from_RESET();
+  uint8_t tx_data[4];
+  uint8_t rx_data[4];
 
-  uint8_t buffer[10];
+  tx_data[0] = 0x0;
+
+  //Read ADC ID register to verify communication
+  Ecode_t transferError = SPIDRV_MTransferB(handle, &tx_data, &rx_data, 4);
+  if(transferError == ECODE_EMDRV_SPIDRV_ABORTED){
+	  printf("Transfer Aborted");
+  }
+  else
+	  printf("Transfer Success");
 
 
-  //Transmit data using a Blocking transmit function
-  SPIDRV_MTransmitB(handle, buffer, 10);
-
-  //Transmit data using a callback to catch transfer complete
-  SPIDRV_MTransmit(handle, buffer, 10, TransferComplete);
 
 
   /* Infinite loop */

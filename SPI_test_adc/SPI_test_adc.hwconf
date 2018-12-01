@@ -2,8 +2,11 @@
 <device:XMLDevice xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:device="http://www.silabs.com/ss/hwconfig/document/device.ecore" name="EFR32BG1B232F256GM48" partId="mcu.arm.efr32.bg1.efr32bg1b232f256gm48" contextId="%DEFAULT%">
   <mode name="DefaultMode">
     <property object="DefaultMode" propertyId="mode.diagramLocation" value="100, 100"/>
+    <property object="PORTIO" propertyId="portio.cmu.location.cmu_clkout0loc" value="1"/>
     <property object="PORTIO" propertyId="portio.cmu.location.cmu_clkout1loc" value="2"/>
+    <property object="PORTIO" propertyId="portio.i2c0.location.i2c0_sdaloc" value="3"/>
     <property object="PORTIO" propertyId="portio.leuart0.location.leuart0_rxloc" value="2"/>
+    <property object="PORTIO" propertyId="portio.pcnt0.location.pcnt0_s0inloc" value="3"/>
     <property object="PORTIO" propertyId="portio.prs.location.prs_ch5loc" value="3"/>
     <property object="PORTIO" propertyId="portio.prs.location.prs_ch6loc" value="3"/>
     <property object="PORTIO" propertyId="portio.timer0.location.timer0_cdti0loc" value="1"/>

@@ -31,7 +31,7 @@ all: SPI_test_adc.axf
 SPI_test_adc.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GNU ARM C Linker'
-	arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m4 -mthumb -T "SPI_test_adc.ld" -Xlinker --gc-sections -Xlinker -Map="SPI_test_adc.map" -mfpu=fpv4-sp-d16 -mfloat-abi=softfp --specs=nano.specs -o SPI_test_adc.axf "./CMSIS/EFR32BG1B/startup_gcc_efr32bg1b.o" "./CMSIS/EFR32BG1B/system_efr32bg1b.o" "./emlib/em_assert.o" "./emlib/em_cmu.o" "./emlib/em_dma.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_int.o" "./emlib/em_rtc.o" "./emlib/em_system.o" "./emlib/em_usart.o" "./src/InitDevice.o" "./src/dmactrl.o" "./src/dmadrv.o" "./src/main.o" "./src/rtcdriver.o" "./src/spidrv.o" -Wl,--start-group -lgcc -lc -lnosys -Wl,--end-group
+	arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m4 -mthumb -T "SPI_test_adc.ld" -Xlinker --gc-sections -Xlinker -Map="SPI_test_adc.map" -mfpu=fpv4-sp-d16 -mfloat-abi=softfp --specs=nano.specs -o SPI_test_adc.axf "./CMSIS/EFR32BG1B/startup_gcc_efr32bg1b.o" "./CMSIS/EFR32BG1B/system_efr32bg1b.o" "./emlib/em_assert.o" "./emlib/em_cmu.o" "./emlib/em_dma.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_int.o" "./emlib/em_rtc.o" "./emlib/em_system.o" "./emlib/em_usart.o" "./src/InitDevice.o" "./src/dmactrl.o" "./src/dmadrv.o" "./src/em_gpio.o" "./src/main.o" "./src/rtcdriver.o" "./src/spidrv.o" 
 	@echo 'Finished building target: $@'
 	@echo ' '
 
