@@ -6,11 +6,10 @@
 #include "spidrv_config.h"
 #include "rtcdriver.h"
 #include "rtcdrv_config.h"
-#include "em_gpio.h"
+#include "em_gpio.c"
 #include "stdint.h"
 #include "stdio.h"
 
-typedef int bool;
 #define true 1
 #define false 0
 
@@ -30,7 +29,7 @@ void spidrv_setup(){
 
 
 	//Set PIN to monitor ADC (!RDY)
-	GPIO_PinModeSet(gpioPortA, 5, gpioModeInput); //TODO: pullup setting?
+	GPIO_PinModeSet(gpioPortA, 5, gpioModeInput, 1);
 
 	//Initialize and enable SPIDRV
 	SPIDRV_Init_t initData = SPIDRV_MASTER_USART0;
@@ -42,6 +41,42 @@ void spidrv_setup(){
 
 };
 
+//Ecode_t spi_write(const void * bufferTransmit, int sizeOfWrite){
+//	uint8_t tx_data[4];
+//
+//	Ecode_t txError = SPIDRV_MTransmitB(handle, &tx_data, sizeOfWrite);
+//
+//	return txError;
+//};
+//
+//Ecode_t spi_read(const void * bufferReceive, int sizeOfRead){
+//	uint8_t rx_data[4];
+//
+//	Ecode_t rxError = SPIDRV_MReceiveB(handle, &rx_data, sizeOfRead);
+//
+//	return rxeError;
+//};
+
+void verify_adc_communication(){
+	  uint8_t tx_data[4];
+	  uint8_t rx_data[4];
+
+	  //Read ADC ID register to verify communication
+	  tx_data[0] = 0x0;
+	  Ecode_t txError = SPIDRV_MTransmitB(handle, &tx_data, 1);
+	  Ecode_t rxError = SPIDRV_MReceiveB(handle, &rx_data, 4);
+	  /*if(transferError == ECODE_EMDRV_SPIDRV_ABORTED){
+		  printf("Transfer Aborted");
+	  }
+	  else
+		  printf("Transfer Success");*/
+	  if(rx_data[3] == ID_VAL3 && rx_data[2] == ID_VAL2 && rx_data[1] == ID_VAL1){
+		 printf("ID register verified");
+	  }
+	  else
+		  printf("ID register not verified");
+
+};
 
 int main(void)
 {
@@ -51,22 +86,7 @@ int main(void)
   setup_utilities();
   delay(100);
 
-  uint8_t tx_data[4];
-  uint8_t rx_data[4];
-
-
-  //Read ADC ID register to verify communication
-  tx_data[0] = 0x0;
-  Ecode_t transmitError = SPIDRV_MTransmitB(handle, &tx_data, 4);
-  Ecode_t recieveError = SPIDRV_MRecieveB(handle, &rx_data, 4);
-  /*if(transferError == ECODE_EMDRV_SPIDRV_ABORTED){
-	  printf("Transfer Aborted");
-  }
-  else
-	  printf("Transfer Success");*/
-
-
-
+  verify_adc_communication();
 
   /* Infinite loop */
   while (1) {
