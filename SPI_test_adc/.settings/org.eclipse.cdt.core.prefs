@@ -1,3 +1,6 @@
 eclipse.preferences.version=1
+environment/project/com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.debug\#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt\:4.9.3.20150529/PATH/delimiter=;
+environment/project/com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.debug\#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt\:4.9.3.20150529/PATH/operation=append
+environment/project/com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.debug\#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt\:4.9.3.20150529/PATH/value=
 environment/project/com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.debug\#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt\:4.9.3.20150529/append=true
 environment/project/com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.debug\#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt\:4.9.3.20150529/appendContributed=true

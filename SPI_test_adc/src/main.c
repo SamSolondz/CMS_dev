@@ -54,15 +54,16 @@ int main(void)
   uint8_t tx_data[4];
   uint8_t rx_data[4];
 
-  tx_data[0] = 0x0;
 
   //Read ADC ID register to verify communication
-  Ecode_t transferError = SPIDRV_MTransferB(handle, &tx_data, &rx_data, 4);
-  if(transferError == ECODE_EMDRV_SPIDRV_ABORTED){
+  tx_data[0] = 0x0;
+  Ecode_t transmitError = SPIDRV_MTransmitB(handle, &tx_data, 4);
+  Ecode_t recieveError = SPIDRV_MRecieveB(handle, &rx_data, 4);
+  /*if(transferError == ECODE_EMDRV_SPIDRV_ABORTED){
 	  printf("Transfer Aborted");
   }
   else
-	  printf("Transfer Success");
+	  printf("Transfer Success");*/
 
 
 
