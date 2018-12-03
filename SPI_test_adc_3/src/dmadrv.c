@@ -19,7 +19,7 @@
 #include "em_device.h"
 #include "em_cmu.h"
 #include "em_core.h"
-
+#include <stdbool.h>
 #include "dmadrv.h"
 
 #if defined(EMDRV_DMADRV_UDMA)

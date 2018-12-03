@@ -1,4 +1,5 @@
-src/spidrv.o: ../src/spidrv.c ../src/em_device.h \
+src/spidrv.o: ../src/spidrv.c \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\em_device.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b232f256gm48.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\cmsis\include\core_cm4.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\cmsis\include\core_cmInstr.h \
@@ -44,18 +45,23 @@ src/spidrv.o: ../src/spidrv.c ../src/em_device.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b_af_pins.h \
  ../src/em_gpio.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_bus.h \
- C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\src/em_device.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_assert.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_core.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_common.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_usart.h \
- ../src/dmadrv.h ../src/ecode.h \
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/dmadrv.h \
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/em_device.h \
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/ecode.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_ldma.h \
- ../src/dmadrv_config.h ../src/spidrv.h ../src/em_cmu.h \
- ../src/spidrv_config.h ../src/rtcdriver.h \
- C:\SiliconLabs\SimplicityStudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emdrv\rtcdrv\config/rtcdrv_config.h
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/dmadrv_config.h \
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/spidrv.h \
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/em_cmu.h \
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/spidrv_config.h \
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/rtcdriver.h \
+ C:\SiliconLabs\SimplicityStudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emdrv\rtcdrv\config/rtcdrv_config.h \
+ C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/dmadrv.h
 
-../src/em_device.h:
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\em_device.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b232f256gm48.h:
 
@@ -147,8 +153,6 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_bus.h:
 
-C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\src/em_device.h:
-
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_assert.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_core.h:
@@ -157,20 +161,24 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_usart.h:
 
-../src/dmadrv.h:
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/dmadrv.h:
 
-../src/ecode.h:
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/em_device.h:
+
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/ecode.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_ldma.h:
 
-../src/dmadrv_config.h:
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/dmadrv_config.h:
 
-../src/spidrv.h:
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/spidrv.h:
 
-../src/em_cmu.h:
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/em_cmu.h:
 
-../src/spidrv_config.h:
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/spidrv_config.h:
 
-../src/rtcdriver.h:
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/rtcdriver.h:
 
 C:\SiliconLabs\SimplicityStudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emdrv\rtcdrv\config/rtcdrv_config.h:
+
+C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_test_adc_3\inc/dmadrv.h:

@@ -7,7 +7,9 @@
 #include "ecode.h"
 #include "spidrv.h"
 #include "dmadrv.h"
-
+#include <time.h>
+#include <stdio.h>
+#include <stdbool.h>
 #include "adc_defines.h"
 
 
@@ -22,9 +24,6 @@ void TransferComplete(	SPIDRV_Handle_t handle,
 						Ecode_t transferStatus,
 						int itemsTransferred){};
 void spidrv_setup(){
-	SPIDRV_HandleData_t handleData;
-	SPIDRV_Handle_t handle = &handleData;
-
 	//Set up clocks
 	CMU_ClockEnable(cmuClock_GPIO, true);
 
@@ -58,25 +57,55 @@ void spidrv_setup(){
 //	return rxeError;
 //};
 
-void verify_adc_communication(){
-	  uint8_t tx_data[4];
-	  uint8_t rx_data[4];
+bool adc_verify_communication(){
+	  uint8_t tx_data[1];
+	  uint8_t rx_data[2];
 
 	  //Read ADC ID register to verify communication
-	  tx_data[0] = 0x0;
+	  tx_data[0] = COMMS_READ_ID;
 	  Ecode_t txError = SPIDRV_MTransmitB(handle, &tx_data, 1);
-	  Ecode_t rxError = SPIDRV_MReceiveB(handle, &rx_data, 4);
-	  /*if(transferError == ECODE_EMDRV_SPIDRV_ABORTED){
-		  printf("Transfer Aborted");
-	  }
-	  else
-		  printf("Transfer Success");*/
-	  if(rx_data[3] == ID_VAL3 && rx_data[2] == ID_VAL2 && rx_data[1] == ID_VAL1){
-		 printf("ID register verified");
-	  }
-	  else
-		  printf("ID register not verified");
+	  Ecode_t rxError = SPIDRV_MReceiveB(handle, &rx_data, 2);
 
+	  //Check txError
+	  if(txError == ECODE_EMDRV_SPIDRV_ABORTED){
+		  printf("Transfer Aborted");
+		  return false;
+	  }
+	  else{
+		  printf("Transfer Success");
+	  }
+
+	  //Check rxError
+	  if(rxError == ECODE_EMDRV_SPIDRV_ABORTED){
+		  printf("Receive Aborted");
+		  return false;
+	  }
+	  else{
+		  printf("Receive Success");
+			  //Check that ID register has correct value
+			  if(rx_data[3] == ID_VAL3 && rx_data[2] == ID_VAL2 && rx_data[1] == ID_VAL1){
+				 printf("ID register verified");
+			  }
+			  else{
+				  printf("ID register not verified");
+				  char buffer[50];
+				  int rxVal_3 = rx_data[3];
+				  int rxVal_2 = rx_data[2];
+				  int rxVal_1 = rx_data[1];
+				  int rxVal_0 = rx_data[0];
+				  int n = sprintf(buffer, "0x%d %d %d %d", rxVal_3, rxVal_2, rxVal_1, rxVal_0);
+				  printf("ID register contains: %d", n);
+			  }
+		  return true;
+	  }
+
+};
+
+void adc_configure_channels(){
+	  uint8_t tx_data[2];
+	  tx_data[0] = COMMS_WRITE_CH0;
+	  //tx_data[1] = ; Enable channel 0
+	  Ecode_t txError = SPIDRV_MTransmitB(handle, &tx_data, 1);
 };
 
 int main(void)
@@ -86,8 +115,12 @@ int main(void)
   spidrv_setup();
   //setup_utilities();
   //delay(100);
+  bool connected;
 
-  verify_adc_communication();
+  connected = adc_verify_communication();
+
+  if(connected == true)
+	  adc_configure_channels();
 
   /* Infinite loop */
   while (1) {
