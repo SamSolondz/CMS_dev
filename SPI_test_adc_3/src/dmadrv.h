@@ -77,7 +77,7 @@ extern "C" {
  *   When doing ping-pong transfers, return true to continue or false to
  *   stop transfers.
  ******************************************************************************/
-typedef bool (*DMADRV_Callback_t)(unsigned int channel,
+typedef int (*DMADRV_Callback_t)(unsigned int channel,
                                   unsigned int sequenceNo,
                                   void *userParam);
 

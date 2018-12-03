@@ -2486,7 +2486,7 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .comment       0x0000007e       0x7f ./src/rtcdriver.o
  .comment       0x0000007e       0x7f ./src/spidrv.o
 
-.debug_line     0x00000000     0x89cf
+.debug_line     0x00000000     0x88b1
  .debug_line    0x00000000       0xd7 ./CMSIS/EFR32BG1B/startup_efr32bg1b.o
  .debug_line    0x000000d7      0x863 ./CMSIS/EFR32BG1B/system_efr32bg1b.o
  .debug_line    0x0000093a     0x13a8 ./emlib/em_cmu.o
@@ -2497,9 +2497,9 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .debug_line    0x00004113      0x80f ./emlib/em_system.o
  .debug_line    0x00004922      0xaff ./emlib/em_usart.o
  .debug_line    0x00005421      0xacf ./src/dmadrv.o
- .debug_line    0x00005ef0      0xa21 ./src/main.o
- .debug_line    0x00006911      0xd91 ./src/rtcdriver.o
- .debug_line    0x000076a2     0x132d ./src/spidrv.o
+ .debug_line    0x00005ef0      0x9b5 ./src/main.o
+ .debug_line    0x000068a5      0xd91 ./src/rtcdriver.o
+ .debug_line    0x00007636     0x127b ./src/spidrv.o
 
 .debug_info     0x00000000    0x10d02
  .debug_info    0x00000000       0x26 ./CMSIS/EFR32BG1B/startup_efr32bg1b.o
@@ -2586,7 +2586,7 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .debug_str     0x000f1375      0x2fc ./src/spidrv.o
                               0xed6bb (size before relaxing)
 
-.debug_loc      0x00000000     0x8e56
+.debug_loc      0x00000000     0x8e57
  .debug_loc     0x00000000      0x112 ./CMSIS/EFR32BG1B/system_efr32bg1b.o
  .debug_loc     0x00000112     0x2807 ./emlib/em_cmu.o
  .debug_loc     0x00002919      0x6b2 ./emlib/em_core.o
@@ -2595,10 +2595,10 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .debug_loc     0x00003d4d      0x136 ./emlib/em_rtcc.o
  .debug_loc     0x00003e83       0x89 ./emlib/em_system.o
  .debug_loc     0x00003f0c      0x892 ./emlib/em_usart.o
- .debug_loc     0x0000479e     0x10d8 ./src/dmadrv.o
- .debug_loc     0x00005876      0x1ad ./src/main.o
- .debug_loc     0x00005a23      0xcb3 ./src/rtcdriver.o
- .debug_loc     0x000066d6     0x2780 ./src/spidrv.o
+ .debug_loc     0x0000479e     0x10d9 ./src/dmadrv.o
+ .debug_loc     0x00005877      0x1ad ./src/main.o
+ .debug_loc     0x00005a24      0xcb3 ./src/rtcdriver.o
+ .debug_loc     0x000066d7     0x2780 ./src/spidrv.o
 
 .debug_ranges   0x00000000     0x1170
  .debug_ranges  0x00000000       0x58 ./CMSIS/EFR32BG1B/system_efr32bg1b.o
@@ -2614,7 +2614,7 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .debug_ranges  0x00000ce8      0x218 ./src/rtcdriver.o
  .debug_ranges  0x00000f00      0x270 ./src/spidrv.o
 
-.debug_macro    0x00000000    0x24329
+.debug_macro    0x00000000    0x24321
  .debug_macro   0x00000000      0x22f ./CMSIS/EFR32BG1B/system_efr32bg1b.o
  .debug_macro   0x0000022f      0xa48 ./CMSIS/EFR32BG1B/system_efr32bg1b.o
  .debug_macro   0x00000c77       0x22 ./CMSIS/EFR32BG1B/system_efr32bg1b.o
@@ -2687,30 +2687,30 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .debug_macro   0x00022f4f       0xb9 ./src/dmadrv.o
  .debug_macro   0x00023008       0x1c ./src/dmadrv.o
  .debug_macro   0x00023024       0x3b ./src/dmadrv.o
- .debug_macro   0x0002305f      0x2ea ./src/main.o
- .debug_macro   0x00023349       0x10 ./src/main.o
- .debug_macro   0x00023359       0x10 ./src/main.o
- .debug_macro   0x00023369       0x28 ./src/main.o
- .debug_macro   0x00023391       0x16 ./src/main.o
- .debug_macro   0x000233a7       0x5c ./src/main.o
- .debug_macro   0x00023403       0x2e ./src/main.o
- .debug_macro   0x00023431      0x401 ./src/rtcdriver.o
- .debug_macro   0x00023832       0x52 ./src/rtcdriver.o
- .debug_macro   0x00023884       0x17 ./src/rtcdriver.o
- .debug_macro   0x0002389b       0x55 ./src/rtcdriver.o
- .debug_macro   0x000238f0       0x35 ./src/rtcdriver.o
- .debug_macro   0x00023925       0x9c ./src/rtcdriver.o
- .debug_macro   0x000239c1       0x57 ./src/rtcdriver.o
- .debug_macro   0x00023a18       0x58 ./src/rtcdriver.o
- .debug_macro   0x00023a70       0x1f ./src/rtcdriver.o
- .debug_macro   0x00023a8f       0x43 ./src/rtcdriver.o
- .debug_macro   0x00023ad2       0x20 ./src/rtcdriver.o
- .debug_macro   0x00023af2      0x18e ./src/rtcdriver.o
- .debug_macro   0x00023c80       0x10 ./src/rtcdriver.o
- .debug_macro   0x00023c90       0x35 ./src/rtcdriver.o
- .debug_macro   0x00023cc5      0x37a ./src/spidrv.o
- .debug_macro   0x0002403f       0x2d ./src/spidrv.o
- .debug_macro   0x0002406c      0x2bd ./src/spidrv.o
+ .debug_macro   0x0002305f      0x2e6 ./src/main.o
+ .debug_macro   0x00023345       0x10 ./src/main.o
+ .debug_macro   0x00023355       0x10 ./src/main.o
+ .debug_macro   0x00023365       0x28 ./src/main.o
+ .debug_macro   0x0002338d       0x16 ./src/main.o
+ .debug_macro   0x000233a3       0x5c ./src/main.o
+ .debug_macro   0x000233ff       0x2e ./src/main.o
+ .debug_macro   0x0002342d      0x401 ./src/rtcdriver.o
+ .debug_macro   0x0002382e       0x52 ./src/rtcdriver.o
+ .debug_macro   0x00023880       0x17 ./src/rtcdriver.o
+ .debug_macro   0x00023897       0x55 ./src/rtcdriver.o
+ .debug_macro   0x000238ec       0x35 ./src/rtcdriver.o
+ .debug_macro   0x00023921       0x9c ./src/rtcdriver.o
+ .debug_macro   0x000239bd       0x57 ./src/rtcdriver.o
+ .debug_macro   0x00023a14       0x58 ./src/rtcdriver.o
+ .debug_macro   0x00023a6c       0x1f ./src/rtcdriver.o
+ .debug_macro   0x00023a8b       0x43 ./src/rtcdriver.o
+ .debug_macro   0x00023ace       0x20 ./src/rtcdriver.o
+ .debug_macro   0x00023aee      0x18e ./src/rtcdriver.o
+ .debug_macro   0x00023c7c       0x10 ./src/rtcdriver.o
+ .debug_macro   0x00023c8c       0x35 ./src/rtcdriver.o
+ .debug_macro   0x00023cc1      0x376 ./src/spidrv.o
+ .debug_macro   0x00024037       0x2d ./src/spidrv.o
+ .debug_macro   0x00024064      0x2bd ./src/spidrv.o
 
 .debug_frame    0x00000000     0x1be4
  .debug_frame   0x00000000       0xd4 ./CMSIS/EFR32BG1B/system_efr32bg1b.o
