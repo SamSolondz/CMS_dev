@@ -1,6 +1,6 @@
 #include "em_device.h"
 #include "em_chip.h"
-
+#include "em_core.h"
 #include "adc_defines.h"
 #include "spidrv.h"
 #include "spidrv_config.h"

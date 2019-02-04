@@ -18,5 +18,6 @@ C_DEPS :=
 SUBDIRS := \
 CMSIS/EFR32BG1B \
 emlib \
+inc \
 src \
 
