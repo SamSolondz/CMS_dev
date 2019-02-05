@@ -100,14 +100,22 @@ void spi_write_uint8(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
 
 }
 
-void spi_write_int32(int number_of_bytes, uint8_t * TXptr, int32_t * RXptr){
+void spi_write_int32(int number_of_bytes, uint8_t * TXptr, int8_t * RXptr){
 	//Set CS low
 	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 0);
 
 	int i = 0;
 	while(i < number_of_bytes){
+		if(i == 3){
+			//Check if !RDY has data
+			int notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
+			while(notRDY == 1){
+				notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
+			};
+		}
 		  RXptr[i] = USART_SpiTransfer(USART1, TXptr[i]);
-		  uint8_t test = RXptr[i];
+		  uint8_t testRX = RXptr[i];
+		  uint8_t testTX = TXptr[i];
 		  i++;
 	  }
 
@@ -162,19 +170,19 @@ void adc_configure_channels(){	//Write MSB first
 	  //Channel 0 Configuration
 	  uint8_t RxBuffer[3] = {0x00, 0x00, 0x00};
 
-	  uint8_t Config0Buffer[3] = { CONFIGURE_CH0_WRITE,
-			  	  	  	  	  CONFIGURE_CH0_BYTE1,
-							  CONFIGURE_CH0_BYTE0};
+	  uint8_t Config0Buffer[3] = {CONFIGURE_CH0_WRITE,
+			  	  	  	  	  	  CONFIGURE_CH0_BYTE1,
+								  CONFIGURE_CH0_BYTE0};
 
-	  uint8_t Config1Buffer[3] = { CONFIGURE_CH1_WRITE,
+	  uint8_t Config1Buffer[3] = {CONFIGURE_CH1_WRITE,
 			  	  	  	  	  	  CHANNEL_DISABLE,
 								  CHANNEL_DISABLE};
 
-	  uint8_t Config2Buffer[3] = { CONFIGURE_CH2_WRITE,
+	  uint8_t Config2Buffer[3] = {CONFIGURE_CH2_WRITE,
 			  	  	  	  	  	  CHANNEL_DISABLE,
 								  CHANNEL_DISABLE};
 
-	  uint8_t Config3Buffer[3] = { CONFIGURE_CH3_WRITE,
+	  uint8_t Config3Buffer[3] = {CONFIGURE_CH3_WRITE,
 			  	  	  	  	  	  CHANNEL_DISABLE,
 								  CHANNEL_DISABLE};
 
@@ -185,27 +193,36 @@ void adc_configure_channels(){	//Write MSB first
 
 
 	  //Channel 0 Setup configuration
-	  uint8_t SetupBuffer[3] = { SETUP_CONFIG_WRITE,
-			  	  	  	  	  SETUP_CONFIG_0_BYTE1,
-							  SETUP_CONFIG_0_BYTE0};
+	  uint8_t SetupBuffer[3] = {SETUP_CONFIG_WRITE,
+			  	  	  	  	  	SETUP_CONFIG_0_BYTE1,
+								SETUP_CONFIG_0_BYTE0};
 
 	  spi_write_uint8(3, SetupBuffer, RxBuffer);
 
 	  //Channel 0 Filter configuration
-	  uint8_t FilterBuffer0[3] = { FILTER_CONFIG_WRITE,
+	  uint8_t FilterBuffer0[3] = {FILTER_CONFIG_WRITE,
 			  	  	  	  	  	  FILTER_CONFIG_BYTE1,
 								  FILTER_CONFIG_BYTE0};
 
 	  spi_write_uint8(3, FilterBuffer0, RxBuffer);
 
-	  //Set ADC mode to continuous
-	  /*uint8_t AdcBuffer[3] = { ADC_MODE_WRITE,
-			  	  	  	  	  	  ADC_MODE_CONT_BYTE1,
-								  ADC_MODE_CONT_BYTE0};
 
-	  for(int i = 0; i < TxBuffer_size; i++){
-		  USART_SpiTransfer(USART1, AdcBuffer[i]);
-	  }*/
+	  uint8_t DummyBuffer[4] = {0x00,0x00,0x00,0x00};
+	 //Gain Register
+	  uint8_t GainBuffer[4] = { GAIN_CONFIG_WRITE,
+			  	  	  	  	  	  	 GAIN_CONFIG_BYTE2,
+	  	  	  	  	  	  	  	  	 GAIN_CONFIG_BYTE1,
+									 GAIN_CONFIG_BYTE0};
+
+	  spi_write_uint8(4, GainBuffer, DummyBuffer);
+
+	  //Offset Register
+	  uint8_t OffsetBuffer[4] = { OFFSET_CONFIG_WRITE,
+			  	  	  	  	  	  OFFSET_CONFIG_BYTE2,
+	  	  	  	  	  	  	  	  OFFSET_CONFIG_BYTE1,
+								  OFFSET_CONFIG_BYTE0};
+
+	  spi_write_uint8(4, OffsetBuffer, DummyBuffer);
 
 	  //Channel 0 Interface
 	  uint8_t InterfaceBuffer[3] = { INTERFACE_WRITE,
@@ -214,45 +231,21 @@ void adc_configure_channels(){	//Write MSB first
 
 	  spi_write_uint8(3, InterfaceBuffer, RxBuffer);
 
-
 };
+int32_t adc_read_data(){
+	  int8_t RxBuffer[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	  //Set ADC to single conversion mode, wait for !RDY, issue data read commands
+	  uint8_t TxBuffer[7] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, ADC_MODE_SINGLE_BYTE0,
+			  	  	  	  	  DATA_READ, TX_DUMMY, TX_DUMMY, TX_DUMMY};
 
-int32_t * adc_read_data(){
-	  uint8_t TxBuffer[4] = {STATUS_READ, DATA_READ, 0x00, 0x00};
-	  uint8_t RxBuffer[3] = {0x00, 0x00, 0x00};
+
 	  int32_t channelRead = 0x0000;
-	  int32_t dataBuffer[4] = {0x00, 0x00, 0x00, 0x00};
-
-	  //Set ADC to single conversion mode
-	  uint8_t ADCBuffer[3] = { ADC_MODE_WRITE,
-			  	  	  	  	  	  ADC_MODE_SINGLE_BYTE1,
-								  ADC_MODE_SINGLE_BYTE0};
-	  spi_write_uint8(3, ADCBuffer, RxBuffer);
-
-	  int notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
-
-	  //Tell ADC we are going to read the data
-	  spi_write_uint8(1, TxBuffer + 1, RxBuffer);
-
-	  //Check if !RDY has data
-	  while(notRDY == 1){
-		  notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
-	  };
-
-	  //Check the status register for which channel the data in the data register belongs to
-	  //uint8_t channelNum = rxBuffer[j] & 0x2;
-
-
 
 	  //Fill the data buffer with ADC value;
-	  for(int i = 0; i < DATABUFFER_SIZE; i++){
-			  uint8_t readBuffer[1] = {DATA_READ, DATA_READ, DATA_READ, DATA_READ};
-			  int32_t dataBuffer[4] = {0x00, 0x00, 0x00, 0x00};
-			  spi_write_int32(1, readBuffer, dataBuffer);
-	  }
+	  spi_write_int32(7, TxBuffer, RxBuffer);
 
-	  channelRead = (dataBuffer[0] << 24) + (dataBuffer[1] << 16)
-	  							+ (dataBuffer[2] << 8) + (dataBuffer[3]);
+	  channelRead = (RxBuffer[3] << 24) + (RxBuffer[4] << 16)
+	  							+ (RxBuffer[5] << 8) + (RxBuffer[6]);
 	  return channelRead;
 }
 
@@ -290,15 +283,15 @@ int main(void){
 	  adc_configure_channels();
 
 	  mux_select(0);
-	  uint32_t * x_axis = adc_read_data();
+	  int32_t x_axis = adc_read_data();
 
 	  mux_select(1);
-	  uint32_t * y_axis = adc_read_data();
+	  int32_t y_axis = adc_read_data();
 
 	  mux_select(2);
-	  uint32_t * z_axis = adc_read_data();
+	  int32_t z_axis = adc_read_data();
 
-	  uint32_t test = 0;
+	  int32_t test = 0;
   }
 
   //SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE)/1000);
