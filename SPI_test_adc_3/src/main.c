@@ -235,7 +235,6 @@ int32_t * adc_read_data(){
 	  spi_write_uint8(1, TxBuffer + 1, RxBuffer);
 
 	  //Check if !RDY has data
-	  int notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
 	  while(notRDY == 1){
 		  notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
 	  };
