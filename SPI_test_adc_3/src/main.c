@@ -7,7 +7,7 @@
 #include "em_usart.h"
 #include "em_timer.h"
 #include "ecode.h"
-//#include "efr32bg1p333f256gm48.h"
+#include "efr32bg1b232f256gm48.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -15,7 +15,7 @@
 #include <inttypes.h>
 #include "InitDevice.h"
 #include "adc_defines.h"
-#include "spidrv.h"
+
 #include "defines.h"
 
 #define	DATABUFFER_SIZE  4
@@ -25,10 +25,6 @@
 
 #define TEST 	1
 
-
-void TransferComplete(	SPIDRV_Handle_t handle,
-						Ecode_t transferStatus,
-						int itemsTransferred){};
 
 void usart_setup(){
 
@@ -76,6 +72,7 @@ void usart_setup(){
 	USART_Enable(USART1,usartEnable);
 }
 
+/*Function to write to registers 1 byte at a time. */
 void spi_write_uint8(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
 	//Set CS low
 	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 0);
@@ -97,10 +94,40 @@ void spi_write_uint8(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
 	  GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 1);
 
 	  return;
+}
+
+/*Function to set ADC to calibration mode and wait*/
+void spi_write_cal(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
+	//Set CS low
+	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 0);
+
+	int i = 0;
+	while(i < number_of_bytes){
+		  RXptr[i] = USART_SpiTransfer(USART1, TXptr[i]);
+		  uint8_t testRX = RXptr[i];
+		  uint8_t testTX = TXptr[i];
+		  i++;
+	  }
+
+	  volatile int notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
+	  while(notRDY == 1){
+		  notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
+	  };
+
+	  // Clear RX buffer and shift register
+	  USART1->CMD |= USART_CMD_CLEARRX;
+	  // Clear TX buffer and shift register
+	  USART1->CMD |= USART_CMD_CLEARTX;
+
+	  //Set CS high
+	  GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 1);
+
+	  return;
 
 }
 
-void spi_write_int32(int number_of_bytes, uint8_t * TXptr, int8_t * RXptr){
+/*Function to read from the ADC data register*/
+void spi_read_data_reg(int number_of_bytes, uint8_t * TXptr, int8_t * RXptr){
 	//Set CS low
 	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 0);
 
@@ -131,25 +158,6 @@ void spi_write_int32(int number_of_bytes, uint8_t * TXptr, int8_t * RXptr){
 
 }
 
-/*void clock_setup(){
-	CMU_ClockEnable(cmuClock_TIMER1, true);
-
-    // Create a timerInit object, based on the API default
-      TIMER_Init_TypeDef timerInit = TIMER_INIT_DEFAULT;
-      timerInit.prescale = timerPrescale1024;
-
-      //Enable interrupt
-      TIMER_IntEnable(TIMER1, TIMER_IF_OF);
-
-      //Enable TIMER0 Interrupt vector in NVIC
-      NVIC_EnableIRQ(TIMER1_IRQn);
-
-      //Set TIMER top vlaue
-      TIMER_TopSet(TIMER1, ONE_SECOND_TIMER_COUNT);
-
-      TIMER_Init(TIMER1, &timerInit);
-
-}*/
 
 bool adc_verify_communication(){
 	 //Set CS low
@@ -166,6 +174,7 @@ bool adc_verify_communication(){
 
 }
 
+/*Function to configure ADC_channels*/
 void adc_configure_channels(){	//Write MSB first
 	  //Channel 0 Configuration
 	  uint8_t RxBuffer[3] = {0x00, 0x00, 0x00};
@@ -208,21 +217,6 @@ void adc_configure_channels(){	//Write MSB first
 
 
 	  uint8_t DummyBuffer[4] = {0x00,0x00,0x00,0x00};
-	 //Gain Register
-	  uint8_t GainBuffer[4] = { GAIN_CONFIG_WRITE,
-			  	  	  	  	  	  	 GAIN_CONFIG_BYTE2,
-	  	  	  	  	  	  	  	  	 GAIN_CONFIG_BYTE1,
-									 GAIN_CONFIG_BYTE0};
-
-	  spi_write_uint8(4, GainBuffer, DummyBuffer);
-
-	  //Offset Register
-	  uint8_t OffsetBuffer[4] = { OFFSET_CONFIG_WRITE,
-			  	  	  	  	  	  OFFSET_CONFIG_BYTE2,
-	  	  	  	  	  	  	  	  OFFSET_CONFIG_BYTE1,
-								  OFFSET_CONFIG_BYTE0};
-
-	  spi_write_uint8(4, OffsetBuffer, DummyBuffer);
 
 	  //Channel 0 Interface
 	  uint8_t InterfaceBuffer[3] = { INTERFACE_WRITE,
@@ -231,22 +225,81 @@ void adc_configure_channels(){	//Write MSB first
 
 	  spi_write_uint8(3, InterfaceBuffer, RxBuffer);
 
+//	  //Calibrate ADC Offset
+//	  uint8_t offset = (ADC_MODE_SINGLE_BYTE0 & (~ADC_MODE_MASK)) | (ADC_MODE_SYS_OFFSET_CAL<<4);
+//	  uint8_t CalibrateOffsetBuffer[3] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, offset};
+//	  spi_write_cal(3, CalibrateOffsetBuffer, RxBuffer);
+//
+//	  //Calibrate ADC Gain
+//	  uint8_t gain = (ADC_MODE_SINGLE_BYTE0 & (~ADC_MODE_MASK)) | (ADC_MODE_SYS_GAIN_CAL<<4);
+//	  uint8_t CalibrateGainBuffer[3] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, gain};
+//	  spi_write_cal(3, CalibrateGainBuffer, RxBuffer);
+
+	  //Gain Register
+	  uint8_t GainBuffer[4] = { GAIN_CONFIG_WRITE,
+			  	  	  	  	  	GAIN_DEFAULT_BYTE2,
+								GAIN_DEFAULT_BYTE1,
+								GAIN_DEFAULT_BYTE0};
+
+	  spi_write_uint8(4, GainBuffer, DummyBuffer);
+
+	  //Offset Register
+	  uint8_t OffsetBuffer[4] = { OFFSET_DEFAULT_WRITE,
+				  	  	  	  	  	  OFFSET_DEFAULT_BYTE2,
+		  	  	  	  	  	  	  	  OFFSET_DEFAULT_BYTE1,
+									  OFFSET_DEFAULT_BYTE0};
+
+	  spi_write_uint8(4, OffsetBuffer, DummyBuffer);
+
+
 };
-int32_t adc_read_data(){
-	  int8_t RxBuffer[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+float adc_read_data(){
+	  int8_t RxBuffer[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	  //Set ADC to single conversion mode, wait for !RDY, issue data read commands
-	  uint8_t TxBuffer[7] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, ADC_MODE_SINGLE_BYTE0,
-			  	  	  	  	  DATA_READ, TX_DUMMY, TX_DUMMY, TX_DUMMY};
+	  uint8_t TxBuffer[8] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, ADC_MODE_SINGLE_BYTE0,
+			  	  	  	  	  DATA_READ, TX_DUMMY, TX_DUMMY, TX_DUMMY, TX_DUMMY};
 
 
 	  int32_t channelRead = 0x0000;
 
 	  //Fill the data buffer with ADC value;
-	  spi_write_int32(7, TxBuffer, RxBuffer);
+	  spi_read_data_reg(7, TxBuffer, RxBuffer);
 
-	  channelRead = (RxBuffer[3] << 24) + (RxBuffer[4] << 16)
-	  							+ (RxBuffer[5] << 8) + (RxBuffer[6]);
-	  return channelRead;
+	  channelRead = (RxBuffer[4] << 24) + (RxBuffer[5] << 16)
+	  							+ (RxBuffer[6] << 8) + (RxBuffer[7]);
+
+	  float calc_channelRead = ((((float)channelRead)+1)/2.66)*(2.5/(0.75 * TWO_TO_THE_31));
+
+	  return calc_channelRead;
+}
+
+float adc_read_temperature(){
+	  int8_t RxBuffer[3] = {0x00, 0x00, 0x00};
+	  uint8_t TxBuffer[3] = {CONFIGURE_CH0_READ, TX_DUMMY, TX_DUMMY};
+
+	  //Read the current settings of the ADC
+	  spi_write_uint8(3, TxBuffer, RxBuffer);
+	  uint8_t byte1 = RxBuffer[1];
+	  uint8_t byte0 = RxBuffer[0];
+
+
+	  uint8_t setTempBuffer[3] = {CONFIGURE_CH0_WRITE,
+			  	  	  	  	  	  CONFIGURE_CH0_TEMP_BYTE1,
+								  CONFIGURE_CH0_TEMP_BYTE0};
+
+	  //Set Channel 0 to take TEMP+ and TEMP- as input
+	  spi_write_uint8(3, setTempBuffer, RxBuffer);
+	  float temp_read = adc_read_data();
+
+	  //Set Channel0 back to original balues;
+	  TxBuffer[0] = CONFIGURE_CH0_WRITE;
+	  TxBuffer[1] = byte1;
+	  TxBuffer[2] = byte0;
+	  spi_write_uint8(3, TxBuffer, RxBuffer);
+
+
+	  return temp_read;
 }
 
 void mux_select(int select){
@@ -283,18 +336,31 @@ int main(void){
 	  adc_configure_channels();
 
 	  mux_select(0);
-	  int32_t x_axis = adc_read_data();
+	  float x_axis = adc_read_data();
+
+	  //See what is in the gain and offset regs
+/*	  uint8_t offsetTXBuff[4] = {0b01110000, TX_DUMMY, TX_DUMMY, TX_DUMMY};
+	  uint8_t offsetRXBuff[4] = {0x00, 0x00, 0x00, 0x00};
+	  spi_write_uint8(4, offsetTXBuff, offsetRXBuff);
+
+	  uint8_t gainTXBuff[4] = {0b01111000, TX_DUMMY, TX_DUMMY, TX_DUMMY};
+	  uint8_t gainRXBuff[4] = {0x00, 0x00, 0x00, 0x00};
+	  spi_write_uint8(4, gainTXBuff, gainRXBuff);*/
 
 	  mux_select(1);
-	  int32_t y_axis = adc_read_data();
+	  float y_axis = adc_read_data();
 
 	  mux_select(2);
-	  int32_t z_axis = adc_read_data();
+	  float z_axis = adc_read_data();
+
+	  float temp = adc_read_temperature();
 
 	  int32_t test = 0;
   }
+  else{
+	  int32_t test = 1; //DEBUG_BREAK
+  }
 
-  //SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE)/1000);
 
   //Infinite loop
   /*while(1){
