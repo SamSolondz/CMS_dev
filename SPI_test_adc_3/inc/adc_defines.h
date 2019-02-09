@@ -110,3 +110,7 @@
 #define GAIN_DIVIDER			0x400000
 #define OFFSET_SUB	 			0x800000
 #define TWO_TO_THE_31			0x80000000
+
+/*Temperature Math constants*/
+#define TEMP_DIVIDER		0.00047
+#define TEMP_OFFSET			273.15

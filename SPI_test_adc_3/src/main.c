@@ -127,24 +127,24 @@ void spi_write_cal(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
 }
 
 /*Function to read from the ADC data register*/
-void spi_read_data_reg(int number_of_bytes, uint8_t * TXptr, int8_t * RXptr){
+void spi_read_data_reg(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
 	//Set CS low
 	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 0);
 
 	int i = 0;
 	while(i < number_of_bytes){
-		if(i == 3){
+		if(TXptr[i] == 0x44){
 			//Check if !RDY has data
 			int notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
 			while(notRDY == 1){
 				notRDY = GPIO_PinInGet(RX_PORT, RX_PIN);
 			};
 		}
-		  RXptr[i] = USART_SpiTransfer(USART1, TXptr[i]);
-		  uint8_t testRX = RXptr[i];
-		  uint8_t testTX = TXptr[i];
-		  i++;
-	  }
+		RXptr[i] = USART_SpiTransfer(USART1, TXptr[i]);
+		uint8_t testRX = RXptr[i];
+		uint8_t testTX = TXptr[i];
+		i++;
+	}
 
 	  // Clear RX buffer and shift register
 	  USART1->CMD |= USART_CMD_CLEARRX;
@@ -253,23 +253,28 @@ void adc_configure_channels(){	//Write MSB first
 
 
 };
-
+/*Command ADC to do a conversion and read the data register*/
 float adc_read_data(){
-	  int8_t RxBuffer[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	  uint8_t RxBuffer[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	  //Set ADC to single conversion mode, wait for !RDY, issue data read commands
 	  uint8_t TxBuffer[8] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, ADC_MODE_SINGLE_BYTE0,
 			  	  	  	  	  DATA_READ, TX_DUMMY, TX_DUMMY, TX_DUMMY, TX_DUMMY};
 
 
-	  int32_t channelRead = 0x0000;
+	  uint32_t channelRead = 0x0000;
 
 	  //Fill the data buffer with ADC value;
-	  spi_read_data_reg(7, TxBuffer, RxBuffer);
-
+	  spi_read_data_reg(8, TxBuffer, RxBuffer);
+	  uint8_t j = RxBuffer[6] & 0xFF;
 	  channelRead = (RxBuffer[4] << 24) + (RxBuffer[5] << 16)
 	  							+ (RxBuffer[6] << 8) + (RxBuffer[7]);
 
-	  float calc_channelRead = ((((float)channelRead)+1)/2.66)*(2.5/(0.75 * TWO_TO_THE_31));
+
+	 //Should fix these "Magic Numbers" to defines or register reads..
+	  float c = 2 * ((float)0x555555 / GAIN_DIVIDER);
+	  float a = ((float)channelRead + 1)/ c;
+	  float b = 2.5/(0.75 * TWO_TO_THE_31);
+	  float calc_channelRead = a * b;
 
 	  return calc_channelRead;
 }
@@ -291,8 +296,9 @@ float adc_read_temperature(){
 	  //Set Channel 0 to take TEMP+ and TEMP- as input
 	  spi_write_uint8(3, setTempBuffer, RxBuffer);
 	  float temp_read = adc_read_data();
+	  temp_read = (temp_read/TEMP_DIVIDER) - TEMP_OFFSET;
 
-	  //Set Channel0 back to original balues;
+	  //Set Channel0 back to original values;
 	  TxBuffer[0] = CONFIGURE_CH0_WRITE;
 	  TxBuffer[1] = byte1;
 	  TxBuffer[2] = byte0;
@@ -323,6 +329,18 @@ void mux_select(int select){
 	}
 }
 
+void read_offset_gain(){
+	  //See what is in the gain and offset regs
+/*	  uint8_t offsetTXBuff[4] = {0b01110000, TX_DUMMY, TX_DUMMY, TX_DUMMY};
+	  uint8_t offsetRXBuff[4] = {0x00, 0x00, 0x00, 0x00};
+	  spi_write_uint8(4, offsetTXBuff, offsetRXBuff);
+
+	  uint8_t gainTXBuff[4] = {0b01111000, TX_DUMMY, TX_DUMMY, TX_DUMMY};
+	  uint8_t gainRXBuff[4] = {0x00, 0x00, 0x00, 0x00};
+	  spi_write_uint8(4, gainTXBuff, gainRXBuff);*/
+
+}
+
 int main(void){
   /* Chip errata */
   CHIP_Init();
@@ -338,27 +356,17 @@ int main(void){
 	  mux_select(0);
 	  float x_axis = adc_read_data();
 
-	  //See what is in the gain and offset regs
-/*	  uint8_t offsetTXBuff[4] = {0b01110000, TX_DUMMY, TX_DUMMY, TX_DUMMY};
-	  uint8_t offsetRXBuff[4] = {0x00, 0x00, 0x00, 0x00};
-	  spi_write_uint8(4, offsetTXBuff, offsetRXBuff);
-
-	  uint8_t gainTXBuff[4] = {0b01111000, TX_DUMMY, TX_DUMMY, TX_DUMMY};
-	  uint8_t gainRXBuff[4] = {0x00, 0x00, 0x00, 0x00};
-	  spi_write_uint8(4, gainTXBuff, gainRXBuff);*/
 
 	  mux_select(1);
 	  float y_axis = adc_read_data();
-
 	  mux_select(2);
 	  float z_axis = adc_read_data();
-
 	  float temp = adc_read_temperature();
 
-	  int32_t test = 0;
+	  int test = 0;
   }
   else{
-	  int32_t test = 1; //DEBUG_BREAK
+	  int test = 1; //DEBUG_BREAK
   }
 
 
