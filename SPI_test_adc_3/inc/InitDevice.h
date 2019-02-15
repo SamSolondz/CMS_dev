@@ -60,6 +60,9 @@ extern void PORTIO_enter_DefaultMode_from_RESET(void);
 #define MUX_NEG_PIN		(11)
 #define MUX_NEG_PORT	(gpioPortC)
 
+#define LED0_PIN		(6)
+#define	LED0_PORT		(gpioPortF)
+
 // [User-defined pin name abstraction]$
 
 #endif

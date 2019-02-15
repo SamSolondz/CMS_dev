@@ -36,6 +36,11 @@
 			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_emu.c</locationURI>
 		</link>
 		<link>
+			<name>emlib/em_letimer.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v1.1/platform/emlib/src/em_letimer.c</locationURI>
+		</link>
+		<link>
 			<name>emlib/em_system.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_system.c</locationURI>
