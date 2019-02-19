@@ -28,14 +28,12 @@
 #define ONE_MILLISECOND_BASE_VALUE_COUNT             1000
 #define ONE_SECOND_TIMER_COUNT                        13672
 #define MILLISECOND_DIVISOR                           13.672
+#define	ONE_MINUTE_MS		60000
 
 #define TEST 	1
 
 uint16_t ms_counter = 0;
-uint32_t x_values[4] = {0x0000,0x0000,0x0000,0x0000};
-uint32_t y_values[4] = {0x0000,0x0000,0x0000,0x0000};
-uint32_t z_values[4] = {0x0000,0x0000,0x0000,0x0000};
-int readCount = 0;
+int readCount = 1;
 
 void usart_setup(){
 
@@ -106,21 +104,23 @@ void mux_select(int select){
 
 void TIMER0_IRQHandler(void) {
 	TIMER_IntClear(TIMER0, TIMER_IF_OF);      // Clear overflow flag
-	if(ms_counter < 5000)
+	if(ms_counter < ONE_MINUTE_MS)
 		ms_counter++;                             // Increment counter
 	else{
 		GPIO_PinOutToggle(LED0_PORT, LED0_PIN);
 		//Recalibrate ADC channels (TODO: Change this to just gain and offset)
 		ms_counter = 0;
 
-		  mux_select(0);
-
+		mux_select(0);
 		adc_configure_channels();
 		double xread = adc_read_data();
+
+		mux_select(1);
 		adc_configure_channels();
 		double yread = adc_read_data();
-		adc_configure_channels();
 
+		mux_select(2);
+		adc_configure_channels();
 		double zread = adc_read_data();
 
 		float temp = adc_read_temperature();
@@ -133,14 +133,17 @@ void TIMER0_IRQHandler(void) {
 		printf("\r\n x = %.17lf V", xread);
 		printf("\r\n y = %.17lf V", yread);
 		printf("\r\n z = %.17lf V", zread);
+		printf("\r\n Temperature = %.2f C V", temp);
 		//printf("\r\n Dev = %.17lf V", dev);
 		readCount++;
 	}
 }
 
 void timer0_setup(void){
+
 	CMU_ClockEnable(cmuClock_TIMER0, true);
-	TIMER_TopSet(TIMER0, 40000000);	//Set timer TOP value
+	uint32_t val = CMU_ClockFreqGet(cmuClock_CORE)/1000; //get clock in kHz
+	TIMER_TopSet(TIMER0, val);	//Set timer TOP value
 
 	TIMER_Init_TypeDef timerInit =            // Setup Timer initialization
 			{ .enable = true,                  // Start timer upon configuration
@@ -175,13 +178,11 @@ int main(void){
 
   bool verified = adc_verify_communication();
   if(verified == true){
-	GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 1);	//Pos diff mux
+	 GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 1);	//Pos diff mux
 	 printf("\r\n--->Connected to ADC via SPI<---");
-	  adc_configure_channels();
+	 adc_configure_channels();
 
-
-
-	  int test = 0;
+	 int test = 0;
   }
   else{
 	  printf("\r\n!!!No connection to ADC!!!");
