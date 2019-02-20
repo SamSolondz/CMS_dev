@@ -64,6 +64,7 @@ src/main.o: ../src/main.c \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/bspconfig.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\hardware\kit\common\bsp\bsp_bcp.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_usart.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/math.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/InitDevice.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_defines.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/defines.h \
@@ -203,6 +204,8 @@ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/bspconfig.
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\hardware\kit\common\bsp\bsp_bcp.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_usart.h:
+
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/math.h:
 
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/InitDevice.h:
 

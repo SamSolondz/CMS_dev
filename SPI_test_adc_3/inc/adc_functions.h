@@ -10,7 +10,9 @@ bool adc_verify_communication();
 void adc_configure_channels();
 
 /*Command ADC to do a conversion and read the data register*/
-float adc_read_data();
+double adc_read_data();
 
 /*Read the temperature from the ADC internal sensor*/
 float adc_read_temperature();
+
+void adc_calibrate();

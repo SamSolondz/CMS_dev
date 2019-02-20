@@ -74,24 +74,10 @@ void adc_configure_channels(){	//Write MSB first
 //	  uint8_t CalibrateGainBuffer[3] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, gain};
 //	  spi_write_cal(3, CalibrateGainBuffer, RxBuffer);
 
-	  //Gain Register
-	  uint8_t GainBuffer[4] = { GAIN_CONFIG_WRITE,
-			  	  	  	  	  	GAIN_DEFAULT_BYTE2,
-								GAIN_DEFAULT_BYTE1,
-								GAIN_DEFAULT_BYTE0};
-
-	  spi_write_uint8(4, GainBuffer, DummyBuffer);
-
-	  //Offset Register
-	  uint8_t OffsetBuffer[4] = { OFFSET_DEFAULT_WRITE,
-				  	  	  	  	  	  OFFSET_DEFAULT_BYTE2,
-		  	  	  	  	  	  	  	  OFFSET_DEFAULT_BYTE1,
-									  OFFSET_DEFAULT_BYTE0};
-
-	  spi_write_uint8(4, OffsetBuffer, DummyBuffer);
+	  adc_calibrate();
 };
 
-float adc_read_data(){
+double adc_read_data(){
 	  uint8_t RxBuffer[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	  //Set ADC to single conversion mode, wait for !RDY, issue data read commands
 	  uint8_t TxBuffer[8] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, ADC_MODE_SINGLE_BYTE0,
@@ -108,10 +94,10 @@ float adc_read_data(){
 
 
 	 //Should fix these "Magic Numbers" to defines or register reads..
-	  float c = 2 * ((float)0x555555 / GAIN_DIVIDER);
-	  float a = ((float)channelRead + 1)/ c;
-	  float b = 2.5/(0.75 * TWO_TO_THE_31);
-	  float calc_channelRead = a * b;
+	  double c = 2 * ((double)0x555555 / GAIN_DIVIDER);
+	  double a = ((double)channelRead + 1)/ c;
+	  double b = 2.5/(0.75 * TWO_TO_THE_31);
+	  double calc_channelRead = a * b;
 
 	  return calc_channelRead;
 };
@@ -144,4 +130,25 @@ float adc_read_temperature(){
 
 
 	  return temp_read;
+};
+
+void adc_calibrate(){
+	uint8_t DummyBuffer[4] = {0x00,0x00,0x00,0x00};
+	//Gain Register
+	uint8_t GainBuffer[4] = { GAIN_CONFIG_WRITE,
+			  	  	  	  	  	GAIN_DEFAULT_BYTE2,
+								GAIN_DEFAULT_BYTE1,
+								GAIN_DEFAULT_BYTE0};
+
+	spi_write_uint8(4, GainBuffer, DummyBuffer);
+
+	//Offset Register
+	uint8_t OffsetBuffer[4] = { OFFSET_DEFAULT_WRITE,
+				  	  	  	  	  	  OFFSET_DEFAULT_BYTE2,
+		  	  	  	  	  	  	  	  OFFSET_DEFAULT_BYTE1,
+									  OFFSET_DEFAULT_BYTE0};
+
+	 spi_write_uint8(4, OffsetBuffer, DummyBuffer);
+
+	 return;
 };

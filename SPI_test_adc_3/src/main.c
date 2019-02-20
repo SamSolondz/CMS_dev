@@ -15,6 +15,7 @@
 #include <inttypes.h>
 #include "infrastructure.h"
 #include "retargetserial.h"
+#include "math.h"
 
 
 #include "InitDevice.h"
@@ -34,7 +35,7 @@ uint16_t ms_counter = 0;
 uint32_t x_values[4] = {0x0000,0x0000,0x0000,0x0000};
 uint32_t y_values[4] = {0x0000,0x0000,0x0000,0x0000};
 uint32_t z_values[4] = {0x0000,0x0000,0x0000,0x0000};
-int i = 0;
+int readCount = 0;
 
 void usart_setup(){
 
@@ -109,22 +110,37 @@ void TIMER0_IRQHandler(void) {
 		ms_counter++;                             // Increment counter
 	else{
 		GPIO_PinOutToggle(LED0_PORT, LED0_PIN);
-		adc_configure_channels();
+		//Recalibrate ADC channels (TODO: Change this to just gain and offset)
 		ms_counter = 0;
-			float xread = adc_read_data();
-//			uint32_t y = adc_read_data();
-//			uint32_t z = adc_read_data();
-			printf(", ");
-			printf("x = %.8f V", xread);
-//			printf("yaxis : %lu V/n", y);
-//			printf("zaxis : %lu V/n", z);
 
+		  mux_select(0);
+
+		adc_configure_channels();
+		double xread = adc_read_data();
+		adc_configure_channels();
+		double yread = adc_read_data();
+		adc_configure_channels();
+
+		double zread = adc_read_data();
+
+		float temp = adc_read_temperature();
+
+
+		//double mean = ((zread + xread + yread)/3);
+		//double res = (zread-mean) + (yread-mean) + (xread-mean);
+		//double dev = sqrt(res/3);
+		printf("\n\n\r ---Read #%d---", readCount);
+		printf("\r\n x = %.17lf V", xread);
+		printf("\r\n y = %.17lf V", yread);
+		printf("\r\n z = %.17lf V", zread);
+		//printf("\r\n Dev = %.17lf V", dev);
+		readCount++;
 	}
 }
 
 void timer0_setup(void){
 	CMU_ClockEnable(cmuClock_TIMER0, true);
-	TIMER_TopSet(TIMER0, 10000);	//Set timer TOP value
+	TIMER_TopSet(TIMER0, 40000000);	//Set timer TOP value
 
 	TIMER_Init_TypeDef timerInit =            // Setup Timer initialization
 			{ .enable = true,                  // Start timer upon configuration
@@ -149,7 +165,7 @@ int main(void){
   CHIP_Init();
   usart_setup();	//CMU_clock_enable happens here
   RETARGET_SerialInit();
-  printf("Hello World!\n");
+  printf("\r\n\nHello World!\n");
   timer0_setup();
 
   GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
@@ -160,26 +176,15 @@ int main(void){
   bool verified = adc_verify_communication();
   if(verified == true){
 	GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 1);	//Pos diff mux
-	  printf("Connected to ADC via SPI");
+	 printf("\r\n--->Connected to ADC via SPI<---");
 	  adc_configure_channels();
 
-	  mux_select(0);
-	  float x_axis = adc_read_data();
-	  printf("x: %.8f V\n", x_axis);
 
-	  mux_select(1);
-	  float y_axis = adc_read_data();
-	  printf("y: %.8f V\n", y_axis);
-
-	  mux_select(2);
-	  float z_axis = adc_read_data();
-	  printf("z: %.8f V\n", z_axis);
-
-	  float temp = adc_read_temperature();
 
 	  int test = 0;
   }
   else{
+	  printf("\r\n!!!No connection to ADC!!!");
 	  int test = 1; //DEBUG_BREAK
   }
 
