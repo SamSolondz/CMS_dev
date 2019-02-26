@@ -27,12 +27,11 @@
 #define	DATABUFFER_SIZE  4
 #define ONE_MILLISECOND_BASE_VALUE_COUNT             1000
 #define ONE_SECOND_TIMER_COUNT                        13672
-#define MILLISECOND_DIVISOR                           13.672
-#define	ONE_MINUTE_MS		60000
+#define ONE_MINUTE_MS							15000//30000//1875
 
 #define TEST 	1
 
-uint16_t ms_counter = 0;
+uint32_t ms_counter = 0;
 int readCount = 1;
 
 void usart_setup(){
@@ -142,6 +141,11 @@ void TIMER0_IRQHandler(void) {
 void timer0_setup(void){
 
 	CMU_ClockEnable(cmuClock_TIMER0, true);
+	CMU_OscillatorEnable(cmuOsc_LFXO,true,true);
+	CMU_ClockSelectSet(cmuClock_HF, cmuSelect_LFXO);
+	CMU_ClockEnable(cmuClock_HF, true);
+
+
 	uint32_t val = CMU_ClockFreqGet(cmuClock_CORE)/1000; //get clock in kHz
 	TIMER_TopSet(TIMER0, val);	//Set timer TOP value
 
@@ -149,7 +153,7 @@ void timer0_setup(void){
 			{ .enable = true,                  // Start timer upon configuration
 					.debugRun = true,   // Keep timer running even on debug halt
 					.prescale = timerPrescale1, // Use /1 prescaler...timer clock = HF clock = 1 MHz
-					.clkSel = timerClkSelHFPerClk, // Set HF peripheral clock as clock source
+					.clkSel = timerClkSelHFPerClk , // Set HF peripheral clock as clock source
 					.fallAction = timerInputActionNone, // No action on falling edge
 					.riseAction = timerInputActionNone, // No action on rising edge
 					.mode = timerModeUp,              // Use up-count mode
@@ -192,8 +196,9 @@ int main(void){
 
   //Infinite loop
   while(1){
-	  //float x_axis = adc_read_data();
-	  //printf("%f\n", x_axis);
-  };
+
+	 EMU_EnterEM2(1);
+
+  	};
 
 }
