@@ -16,9 +16,8 @@
 #include "infrastructure.h"
 #include "retargetserial.h"
 #include "math.h"
-
-
 #include "InitDevice.h"
+
 #include "adc_defines.h"
 #include "defines.h"
 #include "spi_functions.h"
@@ -27,12 +26,22 @@
 #define	DATABUFFER_SIZE  4
 #define ONE_MILLISECOND_BASE_VALUE_COUNT             1000
 #define ONE_SECOND_TIMER_COUNT                        13672
-#define ONE_MINUTE_MS							15000//30000//1875
+#define ONE_MINUTE_MS							15//60000
 
 #define TEST 	1
 
+#define letimerClkFreq  19000000
+
+// Desired letimer interrupt frequency (in Hz)
+#define letimerDesired  1000
+
+#define letimerCompare  letimerClkFreq / letimerDesired
+
 uint32_t ms_counter = 0;
 int readCount = 1;
+int readFlag = 0;
+
+
 
 void usart_setup(){
 
@@ -109,62 +118,85 @@ void TIMER0_IRQHandler(void) {
 		GPIO_PinOutToggle(LED0_PORT, LED0_PIN);
 		//Recalibrate ADC channels (TODO: Change this to just gain and offset)
 		ms_counter = 0;
+		int readFlag = 1;
+		NVIC_DisableIRQ(TIMER0_IRQn);
 
-		mux_select(0);
-		adc_configure_channels();
-		double xread = adc_read_data();
-
-		mux_select(1);
-		adc_configure_channels();
-		double yread = adc_read_data();
-
-		mux_select(2);
-		adc_configure_channels();
-		double zread = adc_read_data();
-
-		float temp = adc_read_temperature();
-
-
-		//double mean = ((zread + xread + yread)/3);
-		//double res = (zread-mean) + (yread-mean) + (xread-mean);
-		//double dev = sqrt(res/3);
-		printf("\n\n\r ---Read #%d---", readCount);
-		printf("\r\n x = %.17lf V", xread);
-		printf("\r\n y = %.17lf V", yread);
-		printf("\r\n z = %.17lf V", zread);
-		printf("\r\n Temperature = %.2f C V", temp);
-		//printf("\r\n Dev = %.17lf V", dev);
-		readCount++;
 	}
 }
 
-void timer0_setup(void){
+void LETIMER0_IRQHandler(void) {
+	  // Clear the interrupt flag
+	  	LETIMER_IntClear(LETIMER0, LETIMER_IFC_COMP0);
+		if(ms_counter < ONE_MINUTE_MS)
+			ms_counter++;
+		else{
+			readFlag = 1;
+			ms_counter = 0;
+			NVIC_DisableIRQ(LETIMER0_IRQn);
+		}
 
-	CMU_ClockEnable(cmuClock_TIMER0, true);
-	CMU_OscillatorEnable(cmuOsc_LFXO,true,true);
-	CMU_ClockSelectSet(cmuClock_HF, cmuSelect_LFXO);
-	CMU_ClockEnable(cmuClock_HF, true);
+}
+
+//void timer0_setup(void){
+//
+//	CMU_ClockEnable(cmuClock_TIMER0, true);
+//	CMU_OscillatorEnable(cmuOsc_LFXO,true,true);
+//	CMU_ClockSelectSet(cmuClock_HF, cmuSelect_LFXO);
+//	CMU_ClockEnable(cmuClock_HF, true);
+//
+//
+//	uint32_t val = CMU_ClockFreqGet(cmuClock_CORE)/1000; //get clock in kHz
+//	TIMER_TopSet(TIMER0, val);	//Set timer TOP value
+//
+//	TIMER_Init_TypeDef timerInit =            // Setup Timer initialization
+//			{ .enable = true,                  // Start timer upon configuration
+//					.debugRun = true,   // Keep timer running even on debug halt
+//					.prescale = timerPrescale1, // Use /1 prescaler...timer clock = HF clock = 1 MHz
+//					.clkSel = timerClkSelHFPerClk , // Set HF peripheral clock as clock source
+//					.fallAction = timerInputActionNone, // No action on falling edge
+//					.riseAction = timerInputActionNone, // No action on rising edge
+//					.mode = timerModeUp,              // Use up-count mode
+//					.dmaClrAct = false,                    // Not using DMA
+//					.quadModeX4 = false,               // Not using quad decoder
+//					.oneShot = false,          // Using continuous, not one-shot
+//					.sync = false, // Not synchronizing timer operation off of other timers
+//			};
+//	TIMER_IntEnable(TIMER0, TIMER_IF_OF);    // Enable Timer0 overflow interrupt
+//	NVIC_EnableIRQ(TIMER0_IRQn);       		// Enable TIMER0 interrupt vector in NVIC
+//	TIMER_Init(TIMER0, &timerInit);           // Configure and start Timer0
+//}
+
+void LETIMER_setup(void){
+	 // Enable clock to the LE modules interface
+	CMU_ClockEnable(cmuClock_HFLE, true);
+	// Select LFXO for the LETIMER
+	CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFXO);
+	CMU_ClockEnable(cmuClock_LETIMER0, true);
 
 
-	uint32_t val = CMU_ClockFreqGet(cmuClock_CORE)/1000; //get clock in kHz
-	TIMER_TopSet(TIMER0, val);	//Set timer TOP value
+	//uint32_t val = CMU_ClockFreqGet(cmuClock_LFA)/1000; //get clock in kHz
+	uint32_t val = CMU_ClockFreqGet(cmuClock_LFA); //get clock in kHz
+	LETIMER_Init_TypeDef letimerInit = LETIMER_INIT_DEFAULT;
 
-	TIMER_Init_TypeDef timerInit =            // Setup Timer initialization
-			{ .enable = true,                  // Start timer upon configuration
-					.debugRun = true,   // Keep timer running even on debug halt
-					.prescale = timerPrescale1, // Use /1 prescaler...timer clock = HF clock = 1 MHz
-					.clkSel = timerClkSelHFPerClk , // Set HF peripheral clock as clock source
-					.fallAction = timerInputActionNone, // No action on falling edge
-					.riseAction = timerInputActionNone, // No action on rising edge
-					.mode = timerModeUp,              // Use up-count mode
-					.dmaClrAct = false,                    // Not using DMA
-					.quadModeX4 = false,               // Not using quad decoder
-					.oneShot = false,          // Using continuous, not one-shot
-					.sync = false, // Not synchronizing timer operation off of other timers
-			};
-	TIMER_IntEnable(TIMER0, TIMER_IF_OF);    // Enable Timer0 overflow interrupt
-	NVIC_EnableIRQ(TIMER0_IRQn);       		// Enable TIMER0 interrupt vector in NVIC
-	TIMER_Init(TIMER0, &timerInit);           // Configure and start Timer0
+	// Reload COMP0 on underflow, idle output, and run in repeat mode
+	letimerInit.comp0Top  = true;
+	letimerInit.ufoa0     = letimerUFOANone;
+	letimerInit.repMode   = letimerRepeatFree;
+
+	// Need REP0 != 0 to pulse on underflow
+	LETIMER_RepeatSet(LETIMER0, 0, 1);
+
+	// Compare on wake-up interval count
+	LETIMER_CompareSet(LETIMER0, 0, val);
+
+	LETIMER_Init(LETIMER0, &letimerInit);
+
+	// Enable LETIMER0 interrupts for COMP0
+	LETIMER_IntEnable(LETIMER0, LETIMER_IEN_COMP0);
+
+	// Enable LETIMER interrupts
+	NVIC_ClearPendingIRQ(LETIMER0_IRQn);
+	NVIC_EnableIRQ(LETIMER0_IRQn);
 }
 
 int main(void){
@@ -173,8 +205,9 @@ int main(void){
   usart_setup();	//CMU_clock_enable happens here
   RETARGET_SerialInit();
   printf("\r\n\nHello World!\n");
-  timer0_setup();
-
+  //timer0_setup();
+  LETIMER_setup();
+  readFlag = 0;
   GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
   GPIO_PinModeSet(MUX_NEG_PORT, MUX_NEG_PIN, gpioModePushPull, 0);	//Neg diff mux
   GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 0);	//Neg diff mux
@@ -197,7 +230,34 @@ int main(void){
   //Infinite loop
   while(1){
 
+	 if(readFlag == 1){
+		 mux_select(0);
+		 adc_configure_channels();
+		 double xread = adc_read_data();
+
+		 mux_select(1);
+		 adc_configure_channels();
+		 double yread = adc_read_data();
+
+		 mux_select(2);
+		 adc_configure_channels();
+		 double zread = adc_read_data();
+
+		 float temp = adc_read_temperature();
+
+
+		printf("\n\n\r ---Read #%d---", readCount);
+		printf("\r\n x = %.17lf V", xread);
+		printf("\r\n y = %.17lf V", yread);
+		printf("\r\n z = %.17lf V", zread);
+		printf("\r\n Temperature = %.2f C V", temp);
+ 		readCount++;
+
+		readFlag = 0;
+		NVIC_EnableIRQ(LETIMER0_IRQn);
+	 }
 	 EMU_EnterEM2(1);
+
 
   	};
 
