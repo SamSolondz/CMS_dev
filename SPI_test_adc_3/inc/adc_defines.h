@@ -1,3 +1,6 @@
+#ifndef INC_ADC_DEFINES_H_
+#define INC_ADC_DEFINES_H_
+
 #define COMMS_ADDR  	0x00
 #define COMMS_READ_ID 	0x47
 
@@ -114,3 +117,6 @@
 /*Temperature Math constants*/
 #define TEMP_DIVIDER		0.00047
 #define TEMP_OFFSET			273.15
+
+#endif
+

@@ -22,6 +22,7 @@
 #include "defines.h"
 #include "spi_functions.h"
 #include "adc_functions.h"
+#include "flash_functions.h"
 
 #define	DATABUFFER_SIZE  4
 #define ONE_MILLISECOND_BASE_VALUE_COUNT             1000
@@ -38,7 +39,7 @@
 #define letimerCompare  letimerClkFreq / letimerDesired
 
 uint32_t ms_counter = 0;
-int readCount = 1;
+int measurementCount = 1;		//Will be used to calculate time for each
 int readFlag = 0;
 
 
@@ -75,7 +76,9 @@ void usart_setup(){
 						USART_ROUTELOC0_CLKLOC_LOC11;/*|
 						USART_ROUTELOC0_CSLOC_LOC11;*/
 
-	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 1);	//CS
+	//Setup SPI lines
+	GPIO_PinModeSet(CS_PORT_ADC, CS_PIN_ADC, gpioModePushPull, 1);	//CS
+	GPIO_PinModeSet(CS_PORT_FLASH, CS_PIN_FLASH, gpioModePushPull, 1);	//CS
 	GPIO_PinModeSet(TX_PORT, TX_PIN, gpioModePushPull, 1);	//Tx
 	GPIO_PinModeSet(RX_PORT, RX_PIN, gpioModeInput, 0);	//Rx
 	GPIO_PinModeSet(SCLK_PORT, SCLK_PIN, gpioModePushPull, 1);	//SCK
@@ -208,6 +211,7 @@ int main(void){
   //timer0_setup();
   LETIMER_setup();
   readFlag = 0;
+
   GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
   GPIO_PinModeSet(MUX_NEG_PORT, MUX_NEG_PIN, gpioModePushPull, 0);	//Neg diff mux
   GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 0);	//Neg diff mux
@@ -218,19 +222,20 @@ int main(void){
 	 GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 1);	//Pos diff mux
 	 printf("\r\n--->Connected to ADC via SPI<---");
 	 adc_configure_channels();
-
-	 int test = 0;
+	// int test = 0;
   }
   else{
 	  printf("\r\n!!!No connection to ADC!!!");
-	  int test = 1; //DEBUG_BREAK
+	  //int test = 1; //DEBUG_BREAK
   }
 
 
   //Infinite loop
   while(1){
 
+	 //Read ADC Interrupt
 	 if(readFlag == 1){
+		 //Take measurements
 		 mux_select(0);
 		 adc_configure_channels();
 		 double xread = adc_read_data();
@@ -243,19 +248,31 @@ int main(void){
 		 adc_configure_channels();
 		 double zread = adc_read_data();
 
-		 float temp = adc_read_temperature();
+		 float tempread = adc_read_temperature();
 
+		 //Store measurements
+		 recorded_data new_data;
+		 new_data.xaxis = xread;
+		 new_data.yaxis = yread;
+		 new_data.zaxis = zread;
+		 new_data.temp = tempread;
+		 new_data.measureNum = measurementCount;
 
-		printf("\n\n\r ---Read #%d---", readCount);
-		printf("\r\n x = %.17lf V", xread);
-		printf("\r\n y = %.17lf V", yread);
-		printf("\r\n z = %.17lf V", zread);
-		printf("\r\n Temperature = %.2f C V", temp);
- 		readCount++;
+		 //Display measurements
+		 printf("\n\n\r ---Read #%d---", measurementCount);
+		 printf("\r\n x = %.17lf V", xread);
+		 printf("\r\n y = %.17lf V", yread);
+		 printf("\r\n z = %.17lf V", zread);
+		 printf("\r\n Temperature = %.2f C V", tempread);
 
-		readFlag = 0;
-		NVIC_EnableIRQ(LETIMER0_IRQn);
+		 //Update the number of times
+		 measurementCount++;
+
+		 readFlag = 0;
+		 NVIC_EnableIRQ(LETIMER0_IRQn);
 	 }
+
+	 //Go to sleep
 	 EMU_EnterEM2(1);
 
 

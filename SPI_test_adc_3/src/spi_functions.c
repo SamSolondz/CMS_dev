@@ -1,9 +1,19 @@
 #include "spi_functions.h"
 
 /*Function to write to registers 1 byte at a time. */
-void spi_write_uint8(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
+void spi_write_uint8(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr, int device){
 	//Set CS low
-	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 0);
+	int cs_port, cs_pin;
+	if(device == 0){
+		cs_port = CS_PORT_ADC;
+		cs_pin = CS_PIN_ADC;
+	}
+	else{
+		cs_port = CS_PORT_FLASH;
+		cs_pin = CS_PIN_FLASH;
+	}
+
+	GPIO_PinModeSet(cs_port, cs_pin, gpioModePushPull, 0);
 
 	int i = 0;
 	while(i < number_of_bytes){
@@ -19,15 +29,25 @@ void spi_write_uint8(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
 	  USART1->CMD |= USART_CMD_CLEARTX;
 
 	  //Set CS high
-	  GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 1);
+	  GPIO_PinModeSet(cs_port, cs_pin, gpioModePushPull, 1);
 
 	  return;
 };
 
 /*Function to set ADC to calibration mode and wait*/
-void spi_write_cal(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
+void spi_write_cal(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr, int device){
+	int cs_port, cs_pin;
+	if(device == 0){
+		cs_port = CS_PORT_ADC;
+		cs_pin = CS_PIN_ADC;
+	}
+	else{
+		cs_port = CS_PORT_FLASH;
+		cs_pin = CS_PIN_FLASH;
+	}
+
 	//Set CS low
-	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 0);
+	GPIO_PinModeSet(cs_port, cs_pin, gpioModePushPull, 0);
 
 	int i = 0;
 	while(i < number_of_bytes){
@@ -48,16 +68,26 @@ void spi_write_cal(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
 	  USART1->CMD |= USART_CMD_CLEARTX;
 
 	  //Set CS high
-	  GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 1);
+	  GPIO_PinModeSet(cs_port, cs_pin, gpioModePushPull, 1);
 
 	  return;
 
 };
 
 /*Function to read from the ADC data register*/
-void spi_read_data_reg(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
+void spi_read_data_reg(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr, int device){
+	int cs_port, cs_pin;
+	if(device == 0){
+		cs_port = CS_PORT_ADC;
+		cs_pin = CS_PIN_ADC;
+	}
+	else{
+		cs_port = CS_PORT_FLASH;
+		cs_pin = CS_PIN_FLASH;
+	}
+
 	//Set CS low
-	GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 0);
+	GPIO_PinModeSet(cs_port, cs_pin, gpioModePushPull, 0);
 
 	int i = 0;
 	while(i < number_of_bytes){
@@ -80,7 +110,7 @@ void spi_read_data_reg(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr){
 	  USART1->CMD |= USART_CMD_CLEARTX;
 
 	  //Set CS high
-	  GPIO_PinModeSet(CS_PORT, CS_PIN, gpioModePushPull, 1);
+	  GPIO_PinModeSet(cs_port, cs_pin, gpioModePushPull, 1);
 
 	  return;
 };
@@ -89,9 +119,9 @@ void read_offset_gain(){
 	  //See what is in the gain and offset regs
 	  uint8_t offsetTXBuff[4] = {0b01110000, TX_DUMMY, TX_DUMMY, TX_DUMMY};
 	  uint8_t offsetRXBuff[4] = {0x00, 0x00, 0x00, 0x00};
-	  spi_write_uint8(4, offsetTXBuff, offsetRXBuff);
+	  spi_write_uint8(4, offsetTXBuff, offsetRXBuff, 0);
 
 	  uint8_t gainTXBuff[4] = {0b01111000, TX_DUMMY, TX_DUMMY, TX_DUMMY};
 	  uint8_t gainRXBuff[4] = {0x00, 0x00, 0x00, 0x00};
-	  spi_write_uint8(4, gainTXBuff, gainRXBuff);
+	  spi_write_uint8(4, gainTXBuff, gainRXBuff, 0);
 };

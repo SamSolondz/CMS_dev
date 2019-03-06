@@ -1,12 +1,11 @@
 #include "adc_functions.h"
 
+enum spi_slave adc = ADC_SEL;
 bool adc_verify_communication(){
-	 //Set CS low
-
 	  uint8_t TxBuffer[3] = {COMMS_READ_ID, 0x00, 0x00};
 	  uint8_t RxBuffer[3] = {0x00, 0x00, 0x00};
 
-	  spi_write_uint8(3, TxBuffer, RxBuffer);
+	  spi_write_uint8(3, TxBuffer, RxBuffer, adc);
 
 	  if(RxBuffer[1] == ID_VAL1 && (RxBuffer[2] >> 4) == ID_VAL0)
 		  return true;
@@ -34,10 +33,10 @@ void adc_configure_channels(){	//Write MSB first
 			  	  	  	  	  	  CHANNEL_DISABLE,
 								  CHANNEL_DISABLE};
 
-	  spi_write_uint8(3, Config0Buffer, RxBuffer);
-	  spi_write_uint8(3, Config1Buffer, RxBuffer);
-	  spi_write_uint8(3, Config2Buffer, RxBuffer);
-	  spi_write_uint8(3, Config3Buffer, RxBuffer);
+	  spi_write_uint8(3, Config0Buffer, RxBuffer, adc);
+	  spi_write_uint8(3, Config1Buffer, RxBuffer, adc);
+	  spi_write_uint8(3, Config2Buffer, RxBuffer, adc);
+	  spi_write_uint8(3, Config3Buffer, RxBuffer, adc);
 
 
 	  //Channel 0 Setup configuration
@@ -45,14 +44,14 @@ void adc_configure_channels(){	//Write MSB first
 			  	  	  	  	  	SETUP_CONFIG_0_BYTE1,
 								SETUP_CONFIG_0_BYTE0};
 
-	  spi_write_uint8(3, SetupBuffer, RxBuffer);
+	  spi_write_uint8(3, SetupBuffer, RxBuffer, adc);
 
 	  //Channel 0 Filter configuration
 	  uint8_t FilterBuffer0[3] = {FILTER_CONFIG_WRITE,
 			  	  	  	  	  	  FILTER_CONFIG_BYTE1,
 								  FILTER_CONFIG_BYTE0};
 
-	  spi_write_uint8(3, FilterBuffer0, RxBuffer);
+	  spi_write_uint8(3, FilterBuffer0, RxBuffer, adc);
 
 
 	  uint8_t DummyBuffer[4] = {0x00,0x00,0x00,0x00};
@@ -62,7 +61,7 @@ void adc_configure_channels(){	//Write MSB first
 			  	  	  	  	  	  	 INTERFACE_BYTE1,
 									 INTERFACE_BYTE0};
 
-	  spi_write_uint8(3, InterfaceBuffer, RxBuffer);
+	  spi_write_uint8(3, InterfaceBuffer, RxBuffer, adc);
 
 //	  //Calibrate ADC Offset
 //	  uint8_t offset = (ADC_MODE_SINGLE_BYTE0 & (~ADC_MODE_MASK)) | (ADC_MODE_SYS_OFFSET_CAL<<4);
@@ -87,7 +86,7 @@ double adc_read_data(){
 	  uint32_t channelRead = 0x0000;
 
 	  //Fill the data buffer with ADC value;
-	  spi_read_data_reg(8, TxBuffer, RxBuffer);
+	  spi_read_data_reg(8, TxBuffer, RxBuffer, adc);
 	  uint8_t j = RxBuffer[6] & 0xFF;
 	  channelRead = (RxBuffer[4] << 24) + (RxBuffer[5] << 16)
 	  							+ (RxBuffer[6] << 8) + (RxBuffer[7]);
@@ -108,7 +107,7 @@ float adc_read_temperature(){
 	  uint8_t TxBuffer[3] = {CONFIGURE_CH0_READ, TX_DUMMY, TX_DUMMY};
 
 	  //Read the current settings of the ADC
-	  spi_write_uint8(3, TxBuffer, RxBuffer);
+	  spi_write_uint8(3, TxBuffer, RxBuffer, adc);
 	  uint8_t byte1 = RxBuffer[1];
 	  uint8_t byte0 = RxBuffer[0];
 
@@ -118,7 +117,7 @@ float adc_read_temperature(){
 								  CONFIGURE_CH0_TEMP_BYTE0};
 
 	  //Set Channel 0 to take TEMP+ and TEMP- as input
-	  spi_write_uint8(3, setTempBuffer, RxBuffer);
+	  spi_write_uint8(3, setTempBuffer, RxBuffer, adc);
 	  float temp_read = adc_read_data();
 	  temp_read = (temp_read/TEMP_DIVIDER) - TEMP_OFFSET;
 
@@ -126,7 +125,7 @@ float adc_read_temperature(){
 	  TxBuffer[0] = CONFIGURE_CH0_WRITE;
 	  TxBuffer[1] = byte1;
 	  TxBuffer[2] = byte0;
-	  spi_write_uint8(3, TxBuffer, RxBuffer);
+	  spi_write_uint8(3, TxBuffer, RxBuffer, adc);
 
 
 	  return temp_read;
@@ -140,7 +139,7 @@ void adc_calibrate(){
 								GAIN_DEFAULT_BYTE1,
 								GAIN_DEFAULT_BYTE0};
 
-	spi_write_uint8(4, GainBuffer, DummyBuffer);
+	spi_write_uint8(4, GainBuffer, DummyBuffer, adc);
 
 	//Offset Register
 	uint8_t OffsetBuffer[4] = { OFFSET_DEFAULT_WRITE,
@@ -148,7 +147,7 @@ void adc_calibrate(){
 		  	  	  	  	  	  	  	  OFFSET_DEFAULT_BYTE1,
 									  OFFSET_DEFAULT_BYTE0};
 
-	 spi_write_uint8(4, OffsetBuffer, DummyBuffer);
+	 spi_write_uint8(4, OffsetBuffer, DummyBuffer, adc);
 
 	 return;
 };

@@ -42,8 +42,11 @@ extern void PORTIO_enter_DefaultMode_from_RESET(void);
 
 // $[User-defined pin name abstraction]
 
-#define CS_PIN          (9)
-#define CS_PORT         (gpioPortC)
+#define CS_PIN_ADC       (9)
+#define CS_PORT_ADC      (gpioPortC)
+
+#define CS_PIN_FLASH	(10)
+#define CS_PORT_FLASH	(gpioPortC)
 
 #define RX_PIN          (7)
 #define RX_PORT         (gpioPortC)
