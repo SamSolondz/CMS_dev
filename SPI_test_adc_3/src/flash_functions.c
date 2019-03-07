@@ -55,6 +55,11 @@ uint8_t flash_read_status_register(int status_register){
 	return RxBuffer[2];
 };
 
+bool flash_busy(){
+	uint8_t sr3 = flash_read_status_register(3);
+	return ((sr3 & 0x01) == 1) ? true : false;
+}
+
 /*Write a Status Register
  * (Protection Register or Configuration Register only)*/
 void flash_write_status_register(int status_register, uint8_t sr_value){
@@ -104,3 +109,93 @@ void flash_bad_block_link(uint16_t logical_addr, uint16_t physical_addr){
 	uint8_t RxBuffer[5] = {0x00, 0x00, 0x00, 0x00, 0x00};
 	spi_write_uint8(5, TxBuffer, RxBuffer, flash);
 }
+
+//flash_bad_block_read_LUT(){
+//	uint8_t TxBuffer[1] = {FLASH_READ_BBM_LUT, 0x00, 0x00};
+//	uint8_t RxBuffer[1] = {0x00};
+//	spi_write_uint8(1, TxBuffer, RxBuffer, flash);
+//
+//
+//}
+
+/*Erase memory within a specified block (64-Pages, 128kB)*/
+void flash_block_erase(uint16_t page_address){
+	uint8_t page_addr1 = (page_address >> 8);
+	uint8_t page_addr0 = (page_address & 0x00ff);
+
+	flash_write_enable();
+	uint8_t TxBuffer[4] = {FLASH_BLOCK_ERASE, 0x00, page_addr1, page_addr0};
+	uint8_t RxBuffer[4] = {0x00, 0x00, 0x00, 0x00};
+	spi_write_uint8(4, TxBuffer, RxBuffer, flash);
+}
+
+/*Load program data into the Data buffer for writing data*/
+void flash_load_program_data(uint16_t column_address){
+	uint8_t col_addr1 = (column_address >> 8);
+	uint8_t col_addr0 = (column_address & 0x00ff);
+
+	flash_write_enable();
+	uint8_t TxBuffer[4] = {FLASH_LOAD_PROGRAM_DATA, col_addr1, col_addr1,};
+	uint8_t RxBuffer[4] = {0x00, 0x00, 0x00, 0x00};
+	spi_write_uint8(4, TxBuffer, RxBuffer, flash);
+}
+/*Write the data in the Data buffer*/
+void flash_program_execute(uint16_t page_address){
+	uint8_t page_addr1 = (page_address >> 8);
+	uint8_t page_addr0 = (page_address & 0x00ff);
+
+	flash_write_enable();
+	uint8_t TxBuffer[4] = {FLASH_PROGRAM_EXECUTE, 0x00, page_addr1, page_addr0};
+	uint8_t RxBuffer[4] = {0x00, 0x00, 0x00, 0x00};
+	spi_write_uint8(4, TxBuffer, RxBuffer, flash);
+}
+
+/*Load a page of data into the Data buffer for reading data*/
+void flash_load_read_data(uint16_t page_address){
+	uint8_t page_addr1 = (page_address >> 8);
+	uint8_t page_addr0 = (page_address & 0x00ff);
+
+	uint8_t TxBuffer[4] = {FLASH_PAGE_DATA_READ, 0x00, page_addr1, page_addr0};
+	uint8_t RxBuffer[4] = {0x00, 0x00, 0x00, 0x00};
+	spi_write_uint8(4, TxBuffer, RxBuffer, flash);
+}
+
+/*Read the data in the Data Buffer, BUF = 1
+ *Byte_count can be no larger than */
+uint8_t * flash_read_excute_BUF1(uint16_t column_address, int byte_count){
+	uint8_t col_addr1 = (column_address >> 8);
+	uint8_t col_addr0 = (column_address & 0x00ff);
+
+	int original_size = 4;	//Number of commands to start a read
+	int new_size = original_size + byte_count;
+
+	//Load the TxBuffer with the appropriate commands
+	uint8_t TxBuffer[new_size];
+	TxBuffer[0] = FLASH_READ_DATA;
+	TxBuffer[1] = col_addr1;
+	TxBuffer[2] = col_addr0;
+	TxBuffer[3] = DUMMY_BYTE;
+
+	uint8_t RxBuffer[new_size];
+	RxBuffer[0] = DUMMY_BYTE;
+	RxBuffer[1] = DUMMY_BYTE;
+	RxBuffer[2] = DUMMY_BYTE;
+	RxBuffer[3] = DUMMY_BYTE;
+
+	//Initialize arrays to 0;
+	for(int i = 4; i < (new_size); i++){
+		TxBuffer[i] = 0x00;
+		RxBuffer[i] = 0x00;
+	}
+
+	spi_write_uint8(new_size, TxBuffer, RxBuffer, flash);
+
+	uint8_t data_read[byte_count];
+	for(int i = 0; i < byte_count; i++){
+		data_read[i] = RxBuffer[i + original_size];
+	}
+	return data_read;
+}
+
+
+

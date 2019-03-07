@@ -1700,8 +1700,8 @@ Discarded input sections
  .debug_macro   0x00000000      0x2b7 ./src/InitDevice.o
  .debug_macro   0x00000000       0xe4 ./src/InitDevice.o
  .debug_macro   0x00000000       0x2d ./src/InitDevice.o
- .debug_line    0x00000000      0xa5b ./src/InitDevice.o
- .debug_str     0x00000000    0xe6830 ./src/InitDevice.o
+ .debug_line    0x00000000      0xa53 ./src/InitDevice.o
+ .debug_str     0x00000000    0xe6828 ./src/InitDevice.o
  .comment       0x00000000       0x7f ./src/InitDevice.o
  .debug_frame   0x00000000      0x36c ./src/InitDevice.o
  .ARM.attributes
@@ -2160,6 +2160,8 @@ Discarded input sections
  .rodata        0x00000000       0x48 ./src/flash_functions.o
  .text.flash_read_status_register
                 0x00000000       0x70 ./src/flash_functions.o
+ .text.flash_busy
+                0x00000000       0x28 ./src/flash_functions.o
  .text.flash_write_status_register
                 0x00000000       0x64 ./src/flash_functions.o
  .text.flash_write_enable
@@ -2168,15 +2170,25 @@ Discarded input sections
                 0x00000000       0x28 ./src/flash_functions.o
  .text.flash_bad_block_link
                 0x00000000       0x68 ./src/flash_functions.o
- .debug_info    0x00000000      0xc7d ./src/flash_functions.o
- .debug_abbrev  0x00000000      0x246 ./src/flash_functions.o
- .debug_loc     0x00000000      0x230 ./src/flash_functions.o
- .debug_aranges
+ .text.flash_block_erase
+                0x00000000       0x4c ./src/flash_functions.o
+ .text.flash_load_program_data
+                0x00000000       0x4c ./src/flash_functions.o
+ .text.flash_program_execute
+                0x00000000       0x4c ./src/flash_functions.o
+ .text.flash_load_read_data
+                0x00000000       0x48 ./src/flash_functions.o
+ .text.flash_read_excute
                 0x00000000       0x50 ./src/flash_functions.o
- .debug_ranges  0x00000000       0x40 ./src/flash_functions.o
+ .debug_info    0x00000000      0xebc ./src/flash_functions.o
+ .debug_abbrev  0x00000000      0x255 ./src/flash_functions.o
+ .debug_loc     0x00000000      0x410 ./src/flash_functions.o
+ .debug_aranges
+                0x00000000       0x80 ./src/flash_functions.o
+ .debug_ranges  0x00000000       0x70 ./src/flash_functions.o
  .debug_macro   0x00000000      0x36e ./src/flash_functions.o
  .debug_macro   0x00000000      0xa4e ./src/flash_functions.o
- .debug_macro   0x00000000       0x64 ./src/flash_functions.o
+ .debug_macro   0x00000000       0x7c ./src/flash_functions.o
  .debug_macro   0x00000000      0x335 ./src/flash_functions.o
  .debug_macro   0x00000000       0x22 ./src/flash_functions.o
  .debug_macro   0x00000000       0x4f ./src/flash_functions.o
@@ -2241,10 +2253,10 @@ Discarded input sections
  .debug_macro   0x00000000       0xb6 ./src/flash_functions.o
  .debug_macro   0x00000000       0x16 ./src/flash_functions.o
  .debug_macro   0x00000000      0x129 ./src/flash_functions.o
- .debug_line    0x00000000      0x9ba ./src/flash_functions.o
- .debug_str     0x00000000    0xe82e2 ./src/flash_functions.o
+ .debug_line    0x00000000      0xa2e ./src/flash_functions.o
+ .debug_str     0x00000000    0xe83f9 ./src/flash_functions.o
  .comment       0x00000000       0x7f ./src/flash_functions.o
- .debug_frame   0x00000000      0x10c ./src/flash_functions.o
+ .debug_frame   0x00000000      0x1e4 ./src/flash_functions.o
  .ARM.attributes
                 0x00000000       0x37 ./src/flash_functions.o
  .group         0x00000000        0xc ./src/main.o
@@ -2402,7 +2414,7 @@ Discarded input sections
  .debug_macro   0x00000000       0x3a ./src/main.o
  .debug_macro   0x00000000       0x6a ./src/main.o
  .debug_macro   0x00000000      0x1ea ./src/main.o
- .debug_macro   0x00000000       0x64 ./src/main.o
+ .debug_macro   0x00000000       0x7c ./src/main.o
  .group         0x00000000        0xc ./src/retargetio.o
  .group         0x00000000        0xc ./src/retargetio.o
  .group         0x00000000        0xc ./src/retargetio.o
@@ -4485,7 +4497,7 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .comment       0x0000007e       0x7f ./src/rtcdriver.o
  .comment       0x0000007e       0x7f ./src/spi_functions.o
 
-.debug_line     0x00000000     0xa52e
+.debug_line     0x00000000     0xa4fe
  .debug_line    0x00000000       0xd7 ./CMSIS/EFR32BG1B/startup_efr32bg1b.o
  .debug_line    0x000000d7      0x836 ./CMSIS/EFR32BG1B/system_efr32bg1b.o
  .debug_line    0x0000090d     0x10d0 ./emlib/em_cmu.o
@@ -4495,13 +4507,13 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .debug_line    0x00004006      0x8df ./emlib/em_letimer.o
  .debug_line    0x000048e5      0x814 ./emlib/em_system.o
  .debug_line    0x000050f9      0xa82 ./emlib/em_usart.o
- .debug_line    0x00005b7b      0x987 ./src/adc_functions.o
- .debug_line    0x00006502      0xa19 ./src/dmadrv.o
- .debug_line    0x00006f1b      0xcc1 ./src/main.o
- .debug_line    0x00007bdc      0x901 ./src/retargetio.o
- .debug_line    0x000084dd      0xa8d ./src/retargetserial.o
- .debug_line    0x00008f6a      0xc0e ./src/rtcdriver.o
- .debug_line    0x00009b78      0x9b6 ./src/spi_functions.o
+ .debug_line    0x00005b7b      0x977 ./src/adc_functions.o
+ .debug_line    0x000064f2      0xa19 ./src/dmadrv.o
+ .debug_line    0x00006f0b      0xcb1 ./src/main.o
+ .debug_line    0x00007bbc      0x901 ./src/retargetio.o
+ .debug_line    0x000084bd      0xa8d ./src/retargetserial.o
+ .debug_line    0x00008f4a      0xc0e ./src/rtcdriver.o
+ .debug_line    0x00009b58      0x9a6 ./src/spi_functions.o
 
 .debug_info     0x00000000    0x10b89
  .debug_info    0x00000000       0x26 ./CMSIS/EFR32BG1B/startup_efr32bg1b.o
@@ -4591,12 +4603,12 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
                               0xe39f6 (size before relaxing)
  .debug_str     0x000ea2d5      0xda4 ./emlib/em_usart.o
                               0xe5135 (size before relaxing)
- .debug_str     0x000eb079     0x288e ./src/adc_functions.o
-                              0xe81c2 (size before relaxing)
- .debug_str     0x000ed907     0x3fac ./src/dmadrv.o
+ .debug_str     0x000eb079     0x282d ./src/adc_functions.o
+                              0xe81ba (size before relaxing)
+ .debug_str     0x000ed8a6     0x3fac ./src/dmadrv.o
                               0xe8c43 (size before relaxing)
- .debug_str     0x000f18b3     0x2c3e ./src/main.o
-                              0xecfb0 (size before relaxing)
+ .debug_str     0x000f1852     0x2c9f ./src/main.o
+                              0xed009 (size before relaxing)
  .debug_str     0x000f44f1      0x53e ./src/retargetio.o
                               0xe734c (size before relaxing)
  .debug_str     0x000f4a2f      0x155 ./src/retargetserial.o
@@ -4604,7 +4616,7 @@ OUTPUT(SPI_test_adc_3.axf elf32-littlearm)
  .debug_str     0x000f4b84     0x11a0 ./src/rtcdriver.o
                               0xe9410 (size before relaxing)
  .debug_str     0x000f5d24       0xdd ./src/spi_functions.o
-                              0xe8490 (size before relaxing)
+                              0xe8488 (size before relaxing)
 
 .debug_loc      0x00000000     0x5512
  .debug_loc     0x00000000      0x2e4 ./CMSIS/EFR32BG1B/system_efr32bg1b.o

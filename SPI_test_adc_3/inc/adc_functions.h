@@ -3,8 +3,8 @@
 
 #include "adc_defines.h"
 #include "spi_functions.h"
+#include <stdint.h>
 #include <stdbool.h>
-
 
 /*Read ADC ID register to verify SPI is connected*/
 bool adc_verify_communication();

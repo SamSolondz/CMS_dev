@@ -45,15 +45,5 @@
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_system.c</locationURI>
 		</link>
-		<link>
-			<name>CMSIS/EFR32BG1B/startup_gcc_efr32bg1b.s</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/platform/Device/SiliconLabs/EFR32BG1B/Source/GCC/startup_efr32bg1b.S</locationURI>
-		</link>
-		<link>
-			<name>CMSIS/EFR32BG1B/system_efr32bg1b.c</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/platform/Device/SiliconLabs/EFR32BG1B/Source/system_efr32bg1b.c</locationURI>
-		</link>
 	</linkedResources>
 </projectDescription>

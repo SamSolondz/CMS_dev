@@ -1,9 +1,9 @@
 src/adc_functions.o: ../src/adc_functions.c \
- C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_functions.h \
- C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_defines.h \
- C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/spi_functions.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_functions.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_defines.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/spi_functions.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_usart.h \
- C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/em_device.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/em_device.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b232f256gm48.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\cmsis\include\core_cm4.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\cmsis\include\core_cmInstr.h \
@@ -47,20 +47,20 @@ src/adc_functions.o: ../src/adc_functions.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b_dmareq.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b_af_ports.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b_af_pins.h \
- C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\src/em_gpio.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\src/em_gpio.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_bus.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_assert.h \
- C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/InitDevice.h
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/InitDevice.h
 
-C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_functions.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_functions.h:
 
-C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_defines.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/adc_defines.h:
 
-C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/spi_functions.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/spi_functions.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_usart.h:
 
-C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/em_device.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/em_device.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b232f256gm48.h:
 
@@ -148,10 +148,10 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\device\siliconlabs\efr32bg1b\include\efr32bg1b_af_pins.h:
 
-C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\src/em_gpio.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\src/em_gpio.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_bus.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v1.1\platform\emlib\inc\em_assert.h:
 
-C:\Users\Sam\ Solondz\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/InitDevice.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\SPI_test_adc_3\inc/InitDevice.h:

@@ -8,6 +8,8 @@
 #ifndef INC_FLASH_DEFINES_H_
 #define INC_FLASH_DEFINES_H_
 
+#define DUMMY_BYTE		0x00
+
 #define FLASH_RESET		0xff
 
 #define READ_JEDEC 		0x9f
@@ -27,6 +29,12 @@
 #define FLASH_BAD_BLOCK_MAN	0xa1
 #define FLASH_READ_BBM_LUT	0xa5
 
-#define	FLASH_128KB_BLOCK_ERASE	0xd8
+#define	FLASH_BLOCK_ERASE	0xd8
+
+#define FLASH_LOAD_PROGRAM_DATA	0x02
+#define FLASH_PROGRAM_EXECUTE	0x10
+
+#define FLASH_PAGE_DATA_READ	0x13
+#define FLASH_READ_DATA			0x03
 
 #endif /* INC_FLASH_DEFINES_H_ */
