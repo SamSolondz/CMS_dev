@@ -113,19 +113,19 @@ void mux_select(int select){
 	}
 }
 
-void TIMER0_IRQHandler(void) {
-	TIMER_IntClear(TIMER0, TIMER_IF_OF);      // Clear overflow flag
-	if(ms_counter < ONE_MINUTE_MS)
-		ms_counter++;                             // Increment counter
-	else{
-		GPIO_PinOutToggle(LED0_PORT, LED0_PIN);
-		//Recalibrate ADC channels (TODO: Change this to just gain and offset)
-		ms_counter = 0;
-		int readFlag = 1;
-		NVIC_DisableIRQ(TIMER0_IRQn);
-
-	}
-}
+//void TIMER0_IRQHandler(void) {
+//	TIMER_IntClear(TIMER0, TIMER_IF_OF);      // Clear overflow flag
+//	if(ms_counter < ONE_MINUTE_MS)
+//		ms_counter++;                             // Increment counter
+//	else{
+//		GPIO_PinOutToggle(LED0_PORT, LED0_PIN);
+//		//Recalibrate ADC channels (TODO: Change this to just gain and offset)
+//		ms_counter = 0;
+//		int readFlag = 1;
+//		NVIC_DisableIRQ(TIMER0_IRQn);
+//
+//	}
+//}
 
 void LETIMER0_IRQHandler(void) {
 	  // Clear the interrupt flag
