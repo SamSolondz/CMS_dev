@@ -50,9 +50,8 @@ src/retargetserial.o: ../src/retargetserial.c \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_core.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_common.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_gpio.h \
- ../src/retargetserial.h ../src/retargetserialconfig.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\halconfig/bsphalconfig.h \
+ ../src/retargetserial.h \
+ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\halconfig\inc\hal-config/retargetserialhalconfig.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/board_features.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h \
@@ -62,9 +61,7 @@ src/retargetserial.o: ../src/retargetserial.c \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\module\config/sl_module_bgm111a256v2.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_emu.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config-app-common.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp_bcp.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\halconfig/retargetserialhalconfig.h
+ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/em_device.h:
 
@@ -170,11 +167,7 @@ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/
 
 ../src/retargetserial.h:
 
-../src/retargetserialconfig.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\halconfig/bsphalconfig.h:
+C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\halconfig\inc\hal-config/retargetserialhalconfig.h:
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config.h:
 
@@ -194,8 +187,4 @@ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config-app-common.h:
 
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp_bcp.h:
-
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\halconfig/retargetserialhalconfig.h:

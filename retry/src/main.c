@@ -54,7 +54,7 @@
 
 #define letimerCompare  letimerClkFreq / letimerDesired
 
-//Ports
+//Poer
 #define CS_PIN_ADC       (9)
 #define CS_PORT_ADC      (gpioPortC)
 

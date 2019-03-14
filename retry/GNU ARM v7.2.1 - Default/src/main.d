@@ -77,12 +77,12 @@ src/main.o: ../src/main.c \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_common.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_timer.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_letimer.h \
- ../src/ecode.h ../src/retargetserial.h ../src/retargetserialconfig.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h \
+ ../src/ecode.h ../src/retargetserial.h \
+ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\halconfig\inc\hal-config/retargetserialhalconfig.h \
  ../src/math.h ../src/adc_defines.h ../src/defines.h \
- ../src/spi_functions.h ../src/adc_functions.h ../src/flash_functions.h \
- ../src/flash_defines.h
+ ../src/spi_functions.h \
+ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h \
+ ../src/adc_functions.h ../src/flash_functions.h ../src/flash_defines.h
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/init_mcu.h:
 
@@ -244,11 +244,7 @@ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/
 
 ../src/retargetserial.h:
 
-../src/retargetserialconfig.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h:
+C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\halconfig\inc\hal-config/retargetserialhalconfig.h:
 
 ../src/math.h:
 
@@ -257,6 +253,8 @@ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/
 ../src/defines.h:
 
 ../src/spi_functions.h:
+
+C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h:
 
 ../src/adc_functions.h:
 

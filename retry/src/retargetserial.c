@@ -1,7 +1,7 @@
 /***************************************************************************//**
  * @file
  * @brief Provide stdio retargeting to USART/UART or LEUART.
- * @version 5.6.0
+ * @version 5.5.0
  *******************************************************************************
  * # License
  * <b>Copyright 2015 Silicon Labs, Inc. http://www.silabs.com</b>
@@ -124,9 +124,7 @@ void RETARGET_SerialCrLf(int on)
 void RETARGET_SerialInit(void)
 {
   /* Enable peripheral clocks */
-#if defined(_CMU_HFPERCLKEN0_MASK)
   CMU_ClockEnable(cmuClock_HFPER, true);
-#endif
   /* Configure GPIO pins */
   CMU_ClockEnable(cmuClock_GPIO, true);
   /* To avoid false start, configure output as high */
@@ -146,18 +144,6 @@ void RETARGET_SerialInit(void)
   init.enable = usartDisable;
   USART_InitAsync(usart, &init);
 
-#if defined(GPIO_USART_ROUTEEN_TXPEN)
-  /* Enable pins at correct UART/USART location. */
-  GPIO->USARTROUTE[RETARGET_UART_INDEX].ROUTEEN =
-    GPIO_USART_ROUTEEN_TXPEN | GPIO_USART_ROUTEEN_RXPEN;
-  GPIO->USARTROUTE[RETARGET_UART_INDEX].TXROUTE =
-    (RETARGET_TXPORT << _GPIO_USART_TXROUTE_PORT_SHIFT)
-    | (RETARGET_TXPIN << _GPIO_USART_TXROUTE_PIN_SHIFT);
-  GPIO->USARTROUTE[RETARGET_UART_INDEX].RXROUTE =
-    (RETARGET_RXPORT << _GPIO_USART_RXROUTE_PORT_SHIFT)
-    | (RETARGET_RXPIN << _GPIO_USART_RXROUTE_PIN_SHIFT);
-
-#else
   /* Enable pins at correct UART/USART location. */
   #if defined(USART_ROUTEPEN_RXPEN)
   usart->ROUTEPEN = USART_ROUTEPEN_RXPEN | USART_ROUTEPEN_TXPEN;
@@ -169,7 +155,6 @@ void RETARGET_SerialInit(void)
   #else
   usart->ROUTE = USART_ROUTE_RXPEN | USART_ROUTE_TXPEN | RETARGET_LOCATION;
   #endif
-#endif
 
   /* Clear previous RX interrupts */
   USART_IntClear(RETARGET_UART, USART_IF_RXDATAV);
@@ -294,6 +279,10 @@ int RETARGET_WriteChar(char c)
     RETARGET_TX(RETARGET_UART, '\r');
   }
   RETARGET_TX(RETARGET_UART, c);
+
+  if (LFtoCRLF && (c == '\r')) {
+    RETARGET_TX(RETARGET_UART, '\n');
+  }
 
   return c;
 }
