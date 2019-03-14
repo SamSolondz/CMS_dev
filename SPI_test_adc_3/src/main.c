@@ -1,29 +1,29 @@
-#include "em_device.h"
-#include "em_chip.h"
-#include "em_cmu.h"
-#include "em_gpio.h"
-#include "em_common.h"
-#include "em_cmu.h"
-#include "em_timer.h"
-#include "em_letimer.h"
-#include "ecode.h"
+#include "em_device.h"//
+#include "em_chip.h"//
+#include "em_cmu.h"//
+#include "em_gpio.h"//
+#include "em_common.h"//
+#include "em_cmu.h" //
+#include "em_timer.h"//
+#include "em_letimer.h"//
+#include "ecode.h" //
 #include "efr32bg1b232f256gm48.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <inttypes.h>
-#include "infrastructure.h"
-#include "retargetserial.h"
-#include "math.h"
+#include "infrastructure.h"//
+#include "retargetserial.h"//
+#include "math.h"//
 #include "InitDevice.h"
 
-#include "adc_defines.h"
-#include "defines.h"
-#include "spi_functions.h"
-#include "adc_functions.h"
-#include "flash_functions.h"
-
+#include "adc_defines.h" //
+#include "defines.h"//
+#include "spi_functions.h" //
+#include "adc_functions.h" //
+#include "flash_functions.h"//
+//moved to h file
 #define	DATABUFFER_SIZE  4
 #define ONE_MILLISECOND_BASE_VALUE_COUNT             1000
 #define ONE_SECOND_TIMER_COUNT                        13672
@@ -112,6 +112,8 @@ void mux_select(int select){
 			break;
 	}
 }
+ //have copied up to here, need to get includes tho
+
 
 //void TIMER0_IRQHandler(void) {
 //	TIMER_IntClear(TIMER0, TIMER_IF_OF);      // Clear overflow flag

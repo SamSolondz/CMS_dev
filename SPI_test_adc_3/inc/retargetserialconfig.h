@@ -49,7 +49,7 @@
   #define RETARGET_IRQn        USART0_RX_IRQn               /* IRQ number */
   #define RETARGET_UART        USART0                       /* UART instance */
   #define RETARGET_TX          USART_Tx                     /* Set TX to USART_Tx */
-  #define RETARGET_RX          USART_Rx                     /* Set RX to USART_Rx */
+  /* Set RX to USART_Rx */
   #define RETARGET_TX_LOCATION _USART_ROUTELOC0_TXLOC_LOC0  /* Location of of USART TX pin */
   #define RETARGET_RX_LOCATION _USART_ROUTELOC0_RXLOC_LOC0  /* Location of of USART RX pin */
   #define RETARGET_TXPORT      gpioPortA                    /* UART transmission port */
@@ -57,7 +57,8 @@
   #define RETARGET_RXPORT      gpioPortA                    /* UART reception port */
   #define RETARGET_RXPIN       1                            /* UART reception pin */
   #define RETARGET_USART       1                            /* Includes em_usart.h */
-  #define RETARGET_CTS_LOCATION _USART_ROUTELOC1_CTSLOC_LOC30
+  #define RETARGET_RX          USART_Rx                     
+#define RETARGET_CTS_LOCATION _USART_ROUTELOC1_CTSLOC_LOC30
   #define RETARGET_RTS_LOCATION _USART_ROUTELOC1_RTSLOC_LOC30
   #define RETARGET_CTSPORT      gpioPortA
   #define RETARGET_CTSPIN       2

@@ -46,6 +46,16 @@
 			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_system.c</locationURI>
 		</link>
 		<link>
+			<name>CMSIS/BGM1/startup_gcc_bgm1.s</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/platform/Device/SiliconLabs/BGM1/Source/GCC/startup_bgm1.S</locationURI>
+		</link>
+		<link>
+			<name>CMSIS/BGM1/system_bgm1.c</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/platform/Device/SiliconLabs/BGM1/Source/system_bgm1.c</locationURI>
+		</link>
+		<link>
 			<name>CMSIS/EFR32BG1B/startup_gcc_efr32bg1b.s</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/platform/Device/SiliconLabs/EFR32BG1B/Source/GCC/startup_efr32bg1b.S</locationURI>
