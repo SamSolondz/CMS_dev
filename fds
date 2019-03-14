@@ -1,0 +1,206 @@
+[33mcommit 18f3641a0262e7000aa58a92b346ed0b9790a356[m[33m ([m[1;36mHEAD -> [m[1;32mintegration_test[m[33m)[m
+Author: Touzong <paxi7949@colorado.edu>
+Date:   Tue Mar 12 10:07:35 2019 -0600
+
+    Adding working bluetooth project
+
+[33mcommit 4fd96c866ad5e6be365e2d456f174ed32a2f74d5[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Thu Mar 7 13:05:39 2019 -0700
+
+    fixed linker script issues
+
+[33mcommit 6df9f591b815ded948fdea77016ce1f04d0a65ca[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Thu Mar 7 12:09:13 2019 -0700
+
+    Work on flash_functions
+
+[33mcommit 08ad5bbd9a7f38672f3c71f947ca548220931399[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Wed Mar 6 22:29:53 2019 -0700
+
+    Work on flash_functions
+
+[33mcommit 99852644e5ec3be8b6187c04fbcb1338ca2252e6[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Tue Mar 5 19:14:49 2019 -0700
+
+    Started adding spi flash functionality
+
+[33mcommit 203244d7565a59c7595d47eb2aa927d65c8dd6d4[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Tue Feb 26 12:44:36 2019 -0700
+
+    LETIMER working
+
+[33mcommit 4105f5809f41243f7d516d43648bf028e94620e4[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Tue Feb 26 16:43:13 2019 -0700
+
+    Small changes
+
+[33mcommit b5bced1222fc5cb60dce096a07d0601b779c6a5a[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Tue Feb 19 13:16:34 2019 -0700
+
+    Timer0 configued to 1ms
+
+[33mcommit e854548b42d7f968915465c2a2d5df15e7fefc10[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Tue Feb 19 19:31:31 2019 -0700
+
+    Work on ADC interrupt
+
+[33mcommit f06fa6892196149dd1e43870ac55212072ce2e8a[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Thu Feb 14 18:47:53 2019 -0700
+
+    Seperated adc and spi functions into files, serial terminal working.
+
+[33mcommit 5caba886879834be1b6fea9f63162c5dc0993f5a[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Feb 9 15:19:44 2019 -0700
+
+    ADC now records all values within 0-2.5V
+
+[33mcommit a3b8dfca65288a259579102e5aea62e24ea5e21b[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Feb 9 13:43:46 2019 -0700
+
+    ADC readings now working (needs to be fine tuned for accuracy)
+
+[33mcommit 6fec8af68f4bea42582e7cbd55834202b65dfbf3[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Tue Feb 5 12:28:06 2019 -0700
+
+    MCU is reading ADC values. However, values are not correct.
+
+[33mcommit 5b1f2864f7bc5f7e767ef7a766d68f4e32001cc7[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Tue Feb 5 09:38:38 2019 -0700
+
+    Removed redefinition of notRDY
+
+[33mcommit d3f2880fdd02e337a5fc6b00d02059709af7b48f[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Tue Feb 5 09:36:59 2019 -0700
+
+    Fixed the spi_write() function, added multiplexor function
+
+[33mcommit 69782bc6407bc371717dd2f2a1c73171374d43b6[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sun Feb 3 22:41:54 2019 -0700
+
+    Removed "febtest.txt"
+
+[33mcommit 2409b7796395ca0fa39fb6f6c93ff9ae22377dfc[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sun Feb 3 22:40:56 2019 -0700
+
+    Removed feb.txt
+
+[33mcommit ed0dbacd029f5346c0f59ed1eeabfec99872b2d1[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sun Feb 3 22:36:20 2019 -0700
+
+    Test file
+
+[33mcommit 35ee741f823051966ac4010f591bb19fbedb86cb[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sun Feb 3 22:34:27 2019 -0700
+
+    project files should be there now...
+
+[33mcommit 50be3db5824f816e729edf6fb3a442150685abaa[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sun Feb 3 22:22:18 2019 -0700
+
+    spi_write()
+
+[33mcommit ac6538debd3e65392c2595beedf5cb41ffa80e4d[m
+Merge: 0fd8453 9b9e5e1
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sun Feb 3 22:06:14 2019 -0700
+
+    Merge branch 'master' of https://github.com/SamSolondz/SPI_dev
+
+[33mcommit 0fd8453b8426151996c1040f4670f8eb76de2810[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sun Feb 3 22:01:27 2019 -0700
+
+    Added helper function to write to SPI, not working 100% yet
+
+[33mcommit 9b9e5e18b5d9f4bfabd1f3a6433dd433b2b9c1ae[m
+Author: SamSolondz <45467940+SamSolondz@users.noreply.github.com>
+Date:   Mon Dec 3 15:44:28 2018 -0700
+
+    Started to write configure ADC functions
+
+[33mcommit 1a733b5dadc79d3d140b54feacf6065eb0f0fd06[m
+Author: SamSolondz <45467940+SamSolondz@users.noreply.github.com>
+Date:   Mon Dec 3 14:30:47 2018 -0700
+
+    changed typedef int (*DMADRV_Callback_t)
+
+[33mcommit 73ebfa3e5da3d2247e6e1d2c8497137a14e9f4ff[m
+Author: SamSolondz <45467940+SamSolondz@users.noreply.github.com>
+Date:   Mon Dec 3 14:19:22 2018 -0700
+
+    Fixed the header files and includes.
+    
+    Could be cleaned up a bit
+
+[33mcommit 28b8d31593c80f1e3136d8543b9fc57d9ac397ce[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Dec 1 15:55:17 2018 -0700
+
+    SPI_test_adc
+
+[33mcommit 246f15cd12cfcd69a812e3dd24a9507f3a72babf[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Dec 1 15:39:19 2018 -0700
+
+    SPI_test_adc
+
+[33mcommit 7bc8f38ec3e535394eaec1db7b3737d29964d782[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Dec 1 15:31:29 2018 -0700
+
+    SPI_test_adc/
+
+[33mcommit 3e3f1a4411418387ed6cc929ba5ab62a0dd50c8c[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Dec 1 15:03:53 2018 -0700
+
+    SPI_test_adc
+
+[33mcommit ef9a55fbfec375fcb1e740689667956d51cf166f[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Dec 1 14:57:50 2018 -0700
+
+    SPI_test_adc
+
+[33mcommit 579acddaa4bddf7bbe3b2ae43f6fb88f218b7a8f[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Dec 1 14:26:29 2018 -0700
+
+    SPI_test_adc/
+
+[33mcommit 23a4d1d29ef7cbcb58d2f6bc7fa99181f70028e5[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Sat Dec 1 12:40:41 2018 -0700
+
+    SPI_test_adc
+
+[33mcommit 805d021aedc94bd2cb70737f3f14c992efd7c467[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Thu Nov 29 12:29:18 2018 -0700
+
+    first commit
+
+[33mcommit 8486fd879580df9f2461ea0eb77ef02a1f5161bf[m
+Author: Sam Solondz <samuel.solondz@colorado.edu>
+Date:   Thu Nov 29 12:23:40 2018 -0700
+
+    first commit
