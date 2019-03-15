@@ -229,6 +229,16 @@ int main(void){
 	  //int test = 1; //DEBUG_BREAK
   }
 
+  verified = flash_verify_communication();
+  if(verified == true){
+	 printf("\r\n--->Connected to Flash via SPI<---");
+
+  }
+  else{
+	  printf("\r\n!!!No connection to Flash!!!");
+	  //int test = 1; //DEBUG_BREAK
+  }
+
 
   //Infinite loop
   while(1){
