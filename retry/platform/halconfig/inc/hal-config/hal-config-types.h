@@ -2,7 +2,7 @@
 #define HAL_CONFIG_TYPES_H
 
 #include "em_gpio.h"
-
+//#define HAL_VCOM_ENABLE 1
 #define HAL_CLK_HFCLK_SOURCE_HFRCO      1
 #define HAL_CLK_HFCLK_SOURCE_HFXO       2
 #define HAL_CLK_HFCLK_SOURCE_FSRCO      3

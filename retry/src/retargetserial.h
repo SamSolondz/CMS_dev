@@ -1,7 +1,7 @@
 /***************************************************************************//**
  * @file
  * @brief Retarget stdout to a serial port.
- * @version 5.5.0
+ * @version 5.6.0
  *******************************************************************************
  * # License
  * <b>Copyright 2015 Silicon Labs, Inc. http://www.silabs.com</b>
@@ -55,6 +55,6 @@ void RETARGET_SerialFlush(void);
 #endif
 
 /** @} (end group RetargetIo) */
-/** @} (end group Drivers) */
+/** @} (end group kitdrv) */
 
 #endif

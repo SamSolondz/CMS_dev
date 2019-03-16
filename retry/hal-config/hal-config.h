@@ -1,6 +1,8 @@
 #ifndef HAL_CONFIG_H
 #define HAL_CONFIG_H
 
+#define HAL_VCOM_ENABLE
+
 #include "em_device.h"
 #include "hal-config-types.h"
 
@@ -143,7 +145,7 @@
 // [USART1]$
 
 // $[VCOM]
-// [VCOM]$
+//  [VCOM]$
 
 // $[VUART]
 // [VUART]$
