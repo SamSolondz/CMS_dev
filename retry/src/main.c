@@ -332,7 +332,7 @@ int main(void){
 
   printf("\nHello World!\r\n");
   //timer0_setup();
-  LETIMER_setup();
+  //LETIMER_setup();
   readFlag = 0;
 
   GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
@@ -395,7 +395,7 @@ int main(void){
 
 		 readFlag = 0;
 		 NVIC_EnableIRQ(LETIMER0_IRQn);
-
+	 }
 		 struct gecko_cmd_packet* evt;
 
 		    /* Check for stack event. */
@@ -446,7 +446,40 @@ int main(void){
 		    	 break;
 
 		      case gecko_evt_hardware_soft_timer_id:
-		             sendData(data_ptr);
+
+		            // if(readFlag == 1){
+		            		 //Take measurements
+		            		 mux_select(0);
+		            		 adc_configure_channels();
+		            		 double xread = adc_read_data();
+
+		            		 mux_select(1);
+		            		 adc_configure_channels();
+		            		 double yread = adc_read_data();
+
+		            		 mux_select(2);
+		            		 adc_configure_channels();
+		            		 double zread = adc_read_data();
+
+		            		 float tempread = adc_read_temperature();
+
+		            		 //Store measurements
+		            		 recorded_data new_data;
+		            		 new_data.xaxis = xread;
+		            		 new_data.yaxis = yread;
+		            		 new_data.zaxis = zread;
+		            		 new_data.temp = tempread;
+		            		 new_data.measureNum = measurementCount;
+		            		 recorded_data *data_ptr;
+		            		 data_ptr = &new_data;
+		            		 printf("\n\n\r ---Read #%d---", measurementCount);
+		            				printf("\r\n x = %lf V", data_ptr->xaxis);
+		            				 printf("\r\n y = %lf V", data_ptr->yaxis);
+		            				 printf("\r\n z = %lf V", data_ptr->zaxis);
+		            				 printf("\r\n Temperature = %.2f C", data_ptr->temp);
+
+
+		            		 sendData(data_ptr);
 		             break;
 
 		 /*     case gecko_evt_gatt_server_attribute_value_id:
@@ -514,9 +547,9 @@ int main(void){
 	 }
 
 	 //Go to sleep
-	 EMU_EnterEM2(1);
+	 //EMU_EnterEM2(1);
 
 
   	};
 
-}
+
