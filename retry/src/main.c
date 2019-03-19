@@ -54,6 +54,9 @@
 									  *(p)++ = (uint8_t)((n) >> 32); *(p)++ = (uint8_t)((n) >> 40); \
                                       *(p)++ = (uint8_t)((n) >> 48); *(p)++ = (uint8_t)((n) >> 56); }
 
+//#define FLOAT_TO_UINT32(m) (((uint32_t)(m) & 0x00FFFFFFU) | (uint32_t)((int32_t)(e) << 24))
+
+
 // Desired letimer interrupt frequency (in Hz)
 #define letimerDesired  1000
 
@@ -156,6 +159,9 @@ void mux_select(int select){
 		case 3: //Select the z-axis
 			GPIO_PinOutSet(MUX_POS_PORT, MUX_POS_PIN);
 			GPIO_PinOutSet(MUX_NEG_PORT, MUX_NEG_PIN);
+			break;
+
+		default:
 			break;
 	}
 }
@@ -282,35 +288,35 @@ uint32_t comp_flag;
 uint32_t comparator;
 void sendData(recorded_data * data_ptr)
 {
-	float xread = (float) data_ptr->xaxis;
-	float yread = (float) data_ptr->yaxis;
-	float zread = (float) data_ptr->zaxis;
-	float temp = (float) data_ptr->temp;
+//	uint32_t xread_m = ( data_ptr->xaxis & 0xffffff);
+//	uint32_t xread_e = ( data_ptr->xaxis & (0xff << 24));
 
-//	uint32_t xv =
-//	uint32_t yread =
-//	uint32_t zread =
-//	uint32_t temp =
+//	uint32_t x_value = xread_m | xread_e;
+
+	uint32_t xread = data_ptr->xaxis;
+	uint32_t yread = data_ptr->yaxis;
+	uint32_t zread = data_ptr->zaxis;
+	uint32_t temp  = data_ptr->temp;
 
 	uint8_t flag = 0xff;
 
 	uint8_t tempBuffer[20];
 	uint8_t *p = tempBuffer;
 
-	uint32_t x_value = FLT_TO_UINT32(xread, -3);
-	UINT32_TO_BITSTREAM(p, x_value);
+	//uint32_t x_value = FLT_TO_UINT32(xread, -3);
+	UINT32_TO_BITSTREAM(p, xread);
 	UINT8_TO_BITSTREAM(p, flag);
 
-	uint32_t y_value = FLT_TO_UINT32(yread, -3);
-	UINT32_TO_BITSTREAM(p, y_value);
+	//uint32_t y_value = FLT_TO_UINT32(yread, -3);
+	UINT32_TO_BITSTREAM(p,  yread);
 	UINT8_TO_BITSTREAM(p, flag);
 
-	uint32_t z_value = FLT_TO_UINT32(zread, -3);
-	UINT32_TO_BITSTREAM(p, z_value);
+	//uint32_t z_value = FLT_TO_UINT32(zread, -3);
+	UINT32_TO_BITSTREAM(p, zread);
 	UINT8_TO_BITSTREAM(p, flag);
 
-	uint32_t temp_value = FLT_TO_UINT32(temp, -3);
-	UINT32_TO_BITSTREAM(p, temp_value);
+	//uint32_t temp_value = FLT_TO_UINT32(temp, -3);
+	UINT32_TO_BITSTREAM(p, temp);
 	UINT8_TO_BITSTREAM(p, flag);
 
 	 gecko_cmd_gatt_server_send_characteristic_notification(
@@ -385,10 +391,10 @@ int main(void){
 
 		 //Display measurements
 		 printf("\n\n\r ---Read #%d---", measurementCount);
-		 printf("\r\n x = %lf V", data_ptr->xaxis);
-		 printf("\r\n y = %lf V", data_ptr->yaxis);
-		 printf("\r\n z = %lf V", data_ptr->zaxis);
-		 printf("\r\n Temperature = %.2f C", data_ptr->temp);
+		 printf("\r\n x = %lu V", data_ptr->xaxis);
+		 printf("\r\n y = %lu V", data_ptr->yaxis);
+		 printf("\r\n z = %lu V", data_ptr->zaxis);
+		 printf("\r\n Temperature = %.2lu C", data_ptr->temp);
 
 		 //Update the number of times
 		 measurementCount++;
@@ -430,8 +436,8 @@ int main(void){
 		    		              * tells the timer to run for 1 second (32.768 kHz oscillator), the 2nd parameter is
 		    		              * the timer handle and the 3rd parameter '0' tells the timer to repeat continuously until
 		    		              * stopped manually.*/
-		    		             gecko_cmd_hardware_set_soft_timer(32768, 0, 0);
-		    		             printf("timer started\n");
+		    		             gecko_cmd_hardware_set_soft_timer(3 * 32768, 0, 0);
+		    		             printf("\ntimer started\n");
 		    		 }
 
 		    	 else if (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x00)
@@ -446,22 +452,22 @@ int main(void){
 		    	 break;
 
 		      case gecko_evt_hardware_soft_timer_id:
-
 		            // if(readFlag == 1){
 		            		 //Take measurements
-		            		 mux_select(0);
-		            		 adc_configure_channels();
-		            		 double xread = adc_read_data();
-
 		            		 mux_select(1);
-		            		 adc_configure_channels();
-		            		 double yread = adc_read_data();
+		    	  	  	  	 adc_configure_channels();
+		            		 uint32_t xread = adc_read_data();
 
 		            		 mux_select(2);
-		            		 adc_configure_channels();
-		            		 double zread = adc_read_data();
+		    	  	  	  	 adc_configure_channels();
+		            		 uint32_t yread = adc_read_data();
 
-		            		 float tempread = adc_read_temperature();
+		            		 mux_select(3);
+		    	  	  	  	 adc_configure_channels();
+		            		 uint32_t zread = adc_read_data();
+
+
+		            		 uint32_t tempread = adc_read_temperature();
 
 		            		 //Store measurements
 		            		 recorded_data new_data;
@@ -473,10 +479,10 @@ int main(void){
 		            		 recorded_data *data_ptr;
 		            		 data_ptr = &new_data;
 		            		 printf("\n\n\r ---Read #%d---", measurementCount);
-		            				printf("\r\n x = %lf V", data_ptr->xaxis);
-		            				 printf("\r\n y = %lf V", data_ptr->yaxis);
-		            				 printf("\r\n z = %lf V", data_ptr->zaxis);
-		            				 printf("\r\n Temperature = %.2f C", data_ptr->temp);
+		            	     printf("\r\n x = %lu V", data_ptr->xaxis);
+		            		 printf("\r\n y = %lu V", data_ptr->yaxis);
+		            		 printf("\r\n z = %lu V", data_ptr->zaxis);
+		            		 printf("\r\n Temperature = %.2lu C", data_ptr->temp);
 
 
 		            		 sendData(data_ptr);

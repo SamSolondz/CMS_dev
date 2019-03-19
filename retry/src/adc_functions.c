@@ -98,7 +98,7 @@ double adc_read_data(){
 	  double b = 2.5/(0.75 * TWO_TO_THE_31);
 	  double calc_channelRead = a * b;
 
-	  return calc_channelRead;
+	  return channelRead;
 };
 
 
@@ -118,7 +118,7 @@ float adc_read_temperature(){
 
 	  //Set Channel 0 to take TEMP+ and TEMP- as input
 	  spi_write_uint8(3, setTempBuffer, RxBuffer, adc);
-	  float temp_read = adc_read_data();
+	  uint32_t temp_read = adc_read_data();
 	  temp_read = (temp_read/TEMP_DIVIDER) - TEMP_OFFSET;
 
 	  //Set Channel0 back to original values;

@@ -21,10 +21,10 @@ float adc_read_temperature();
 void adc_calibrate();
 
 typedef struct {
-	double xaxis;
-	double yaxis;
-	double zaxis;
-	float temp;
+	uint32_t xaxis;
+	uint32_t yaxis;
+	uint32_t zaxis;
+	uint32_t temp;
 	int	measureNum; 	//Will be used to timestamp data on Android app.
 }recorded_data;
 
