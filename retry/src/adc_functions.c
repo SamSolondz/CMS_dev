@@ -118,7 +118,7 @@ float adc_read_temperature(){
 
 	  //Set Channel 0 to take TEMP+ and TEMP- as input
 	  spi_write_uint8(3, setTempBuffer, RxBuffer, adc);
-	  uint32_t temp_read = adc_read_data();
+	  uint32_t temp_read = adc_calculate_float(adc_read_data());
 	  temp_read = (temp_read/TEMP_DIVIDER) - TEMP_OFFSET;
 
 	  //Set Channel0 back to original values;
@@ -150,4 +150,15 @@ void adc_calibrate(){
 	 spi_write_uint8(4, OffsetBuffer, DummyBuffer, adc);
 
 	 return;
+};
+
+float adc_calculate_float(uint32_t channelRead)
+{
+	 //Should fix these "Magic Numbers" to defines or register reads..
+	  double c = 2 * ((double)0x555555 / GAIN_DIVIDER); 	//~1.33
+	  double a = ((double)channelRead + 1)/ c;				//
+	  double b = 2.5/(0.75 * TWO_TO_THE_31);
+	  double calc_channelRead = a * b;
+
+	  return (float)calc_channelRead;
 };

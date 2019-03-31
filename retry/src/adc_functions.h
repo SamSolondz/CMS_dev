@@ -17,6 +17,7 @@ double adc_read_data();
 
 /*Read the temperature from the ADC internal sensor*/
 float adc_read_temperature();
+float adc_calculate_float(uint32_t channelRead);
 
 void adc_calibrate();
 
