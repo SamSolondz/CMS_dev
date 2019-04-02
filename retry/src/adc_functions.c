@@ -79,7 +79,7 @@ void adc_configure_channels(){	//Write MSB first
 	  adc_calibrate();
 };
 
-double adc_read_data(){
+uint32_t adc_read_data(){
 	  uint8_t RxBuffer[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	  //Set ADC to single conversion mode, wait for !RDY, issue data read commands
 	  uint8_t TxBuffer[8] = {ADC_MODE_WRITE, ADC_MODE_SINGLE_BYTE1, ADC_MODE_SINGLE_BYTE0,
@@ -94,18 +94,11 @@ double adc_read_data(){
 	  channelRead = (RxBuffer[4] << 24) + (RxBuffer[5] << 16)
 	  							+ (RxBuffer[6] << 8) + (RxBuffer[7]);
 
-
-	 //Should fix these "Magic Numbers" to defines or register reads..
-	  double c = 2 * ((double)0x555555 / GAIN_DIVIDER);
-	  double a = ((double)channelRead + 1)/ c;
-	  double b = 2.5/(0.75 * TWO_TO_THE_31);
-	  double calc_channelRead = a * b;
-
 	  return channelRead;
 };
 
 
-float adc_read_temperature(){
+uint32_t adc_read_temperature(){
 	  uint8_t RxBuffer[3] = {0x00, 0x00, 0x00};
 	  uint8_t TxBuffer[3] = {CONFIGURE_CH0_READ, TX_DUMMY, TX_DUMMY};
 
@@ -121,8 +114,7 @@ float adc_read_temperature(){
 
 	  //Set Channel 0 to take TEMP+ and TEMP- as input
 	  spi_write_uint8(3, setTempBuffer, RxBuffer, adc);
-	  uint32_t temp_read = adc_calculate_float(adc_read_data());
-	  temp_read = (temp_read/TEMP_DIVIDER) - TEMP_OFFSET;
+	  uint32_t temp_read = adc_read_data();
 
 	  //Set Channel0 back to original values;
 	  TxBuffer[0] = CONFIGURE_CH0_WRITE;
@@ -161,7 +153,19 @@ float adc_calculate_float(uint32_t channelRead)
 	  double c = 2 * ((double)0x555555 / GAIN_DIVIDER); 	//~1.33
 	  double a = ((double)channelRead + 1)/ c;				//
 	  double b = 2.5/(0.75 * TWO_TO_THE_31);
-	  double calc_channelRead = a * b;
+	  double conversion_result = a * b;
 
-	  return (float)calc_channelRead;
+	  return ((float)conversion_result);
+};
+
+float adc_calculate_float_temp(uint32_t temp_read)
+{
+	//Should fix these "Magic Numbers" to defines or register reads..
+	double c = 2 * ((double)0x555555 / GAIN_DIVIDER); 	//~1.33
+	double a = ((double)temp_read + 1)/ c;				//
+	double b = 2.5/(0.75 * TWO_TO_THE_31);
+	double conversion_result = a * b;
+
+	conversion_result = (conversion_result/TEMP_DIVIDER) - TEMP_OFFSET;
+	return ((float)conversion_result);
 };

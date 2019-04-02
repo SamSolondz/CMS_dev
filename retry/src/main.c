@@ -60,7 +60,7 @@ int measurementCount = 1;			//Will be used to calculate time for each
 int readFlag = 0;
 int ble_soft_timer_Flag = 0;
 int operation_mode = 0;						//Default to field mode
-int record_time = RECORD_ONE_MINUTE;
+int record_time = RECORD_ONE_SECOND;
 
 
 uint8_t bluetooth_stack_heap[DEFAULT_BLUETOOTH_HEAP(MAX_CONNECTIONS)];
@@ -219,10 +219,13 @@ int main(void){
 			adc_configure_channels();
 			uint32_t zread = adc_read_data();
 
-			uint32_t tempread = adc_read_temperature();
 			mux_select(2);
 			adc_configure_channels();
 			uint32_t yread = adc_read_data();
+
+			adc_configure_channels();
+			uint32_t tempread = adc_read_temperature();
+
 
 			//Store measurements
 			new_data.xaxis = xread;
@@ -230,12 +233,13 @@ int main(void){
 			new_data.zaxis = zread;
 			new_data.temp = tempread;
 			new_data.measureNum = measurementCount;
+			measurementCount++;
 
 			printf("\n\n\r ---Read #%d---", measurementCount);
-			printf("\r\n x = %lu V", data_ptr->xaxis);
-			printf("\r\n y = %lu V", data_ptr->yaxis);
-			printf("\r\n z = %lu V", data_ptr->zaxis);
-			printf("\r\n Temperature = %.2lu C", data_ptr->temp);
+			printf("\r\n x = %f V", adc_calculate_float(data_ptr->xaxis));
+			printf("\r\n y = %f V", adc_calculate_float(data_ptr->yaxis));
+			printf("\r\n z = %f V", adc_calculate_float(data_ptr->zaxis));
+			printf("\r\n Temperature = %.3f C    .", adc_calculate_float_temp(data_ptr->temp));
 
 			readFlag = 0;
 			NVIC_EnableIRQ(LETIMER0_IRQn);
@@ -247,11 +251,11 @@ int main(void){
 	 		 break;
 	 }
 
-	 packet_handler();
-	 if(ble_soft_timer_Flag){
-		 sendData(data_ptr);
-		 ble_soft_timer_Flag = 0;
-	 }
+//	 packet_handler();
+//	 if(ble_soft_timer_Flag){
+//		 sendData(data_ptr);
+//		 ble_soft_timer_Flag = 0;
+//	 }
 
 	 //Go to sleep
 	 EMU_EnterEM2(1);

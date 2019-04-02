@@ -27,7 +27,7 @@
 #define	DATABUFFER_SIZE  4
 #define ONE_MILLISECOND_BASE_VALUE_COUNT             1000
 #define ONE_SECOND_TIMER_COUNT                        13672
-#define ONE_MINUTE_MS							15//60000
+#define ONE_MINUTE_MS							5//60000
 
 #define TEST 	1
 
