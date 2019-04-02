@@ -8,6 +8,7 @@
 #ifndef PIN_DEF_H_
 #define PIN_DEF_H_
 
+
 #define CS_PIN_ADC       (9)
 #define CS_PORT_ADC      (gpioPortC)
 
@@ -31,5 +32,6 @@
 
 #define LED0_PIN		(6)
 #define	LED0_PORT		(gpioPortF)
+
 
 #endif /* PIN_DEF_H_ */

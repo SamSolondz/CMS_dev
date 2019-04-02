@@ -1,14 +1,11 @@
-src/main.o: ../src/main.c \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/init_mcu.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/init_board.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/init_app.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/board_features.h \
+src/bluetooth_utilities.o: ../src/bluetooth_utilities.c \
+ ../src/bluetooth_utilities.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_types.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\soc/native_gecko.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/board_features.h \
+ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\BGM11_BRD4300A\config/hal-config-board.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/em_device.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/bgm111a256v2.h \
@@ -74,26 +71,11 @@ src/main.o: ../src/main.c \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_system.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\halconfig/bsphalconfig.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp_bcp.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_common.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_timer.h \
  C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_letimer.h \
- ../src/ecode.h ../src/retargetserial.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\halconfig\inc\hal-config/retargetserialhalconfig.h \
- ../src/math.h ../src/adc_defines.h ../src/defines.h \
- ../src/spi_functions.h \
- C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h \
- ../src/adc_functions.h ../src/flash_functions.h ../src/flash_defines.h \
- ../src/bluetooth_utilities.h ../src/pin_def.h
+ ../src/adc_functions.h ../src/adc_defines.h ../src/spi_functions.h \
+ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h
 
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/init_mcu.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/init_board.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/init_app.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/board_features.h:
+../src/bluetooth_utilities.h:
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h:
 
@@ -104,6 +86,8 @@ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config.h:
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/board_features.h:
+
+C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h:
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\BGM11_BRD4300A\config/hal-config-board.h:
 
@@ -235,34 +219,12 @@ C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp_bcp.h:
 
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_common.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_timer.h:
-
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_letimer.h:
 
-../src/ecode.h:
-
-../src/retargetserial.h:
-
-C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\halconfig\inc\hal-config/retargetserialhalconfig.h:
-
-../src/math.h:
+../src/adc_functions.h:
 
 ../src/adc_defines.h:
-
-../src/defines.h:
 
 ../src/spi_functions.h:
 
 C:\Users\Touzong\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h:
-
-../src/adc_functions.h:
-
-../src/flash_functions.h:
-
-../src/flash_defines.h:
-
-../src/bluetooth_utilities.h:
-
-../src/pin_def.h:
