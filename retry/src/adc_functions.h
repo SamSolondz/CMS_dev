@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 /*Read ADC ID register to verify SPI is connected*/
-bool adc_verify_communication();
+void adc_verify_communication();
 
 /*Function to configure ADC_channels*/
 void adc_configure_channels();

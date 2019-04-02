@@ -42,21 +42,26 @@
 #include "pin_def.h"
 
 #define	DATABUFFER_SIZE  4
-#define ONE_MILLISECOND_BASE_VALUE_COUNT             1000
-#define ONE_SECOND_TIMER_COUNT                        13672
-#define ONE_MINUTE_MS						30//1966080
+#define ONE_MILLISECOND_BASE_VALUE_COUNT            1000
+#define ONE_SECOND_TIMER_COUNT                      13672
+#define RECORD_ONE_MINUTE							1966080
+#define RECORD_ONE_SECOND							32768
 
+#define MODE_FIELD	0
+#define MODE_DEMO	1
 
 #ifndef MAX_CONNECTIONS
 #define MAX_CONNECTIONS 4
 #endif
 
 
-
 uint32_t ms_counter = 0;
-int measurementCount = 1;		//Will be used to calculate time for each
+int measurementCount = 1;			//Will be used to calculate time for each
 int readFlag = 0;
 int ble_soft_timer_Flag = 0;
+int operation_mode = 0;						//Default to field mode
+int record_time = RECORD_ONE_MINUTE;
+
 
 uint8_t bluetooth_stack_heap[DEFAULT_BLUETOOTH_HEAP(MAX_CONNECTIONS)];
 // Gecko configuration parameters (see gecko_configuration.h)
@@ -154,7 +159,7 @@ void mux_select(int select){
 void LETIMER0_IRQHandler(void) {
 	  // Clear the interrupt flag
 		LETIMER_IntClear(LETIMER0, LETIMER_IFC_COMP0);
-		if(ms_counter < ONE_MINUTE_MS)
+		if(ms_counter < record_time)
 			ms_counter++;
 		else{
 			readFlag = 1;
@@ -174,26 +179,20 @@ int main(void){
 	initApp();		//Initialize application
 
 
+
 	gecko_init(&config);
 	RETARGET_SerialInit();
 	usart_setup();	//CMU_clock_enable happens here, must occur before gpio/letimersetup
-	printf("\nHello World!\r\n");
+	printf("\n\rHello World!\r\n");
 
-
+	//Set GPIO pins//
 	GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
 	GPIO_PinModeSet(MUX_NEG_PORT, MUX_NEG_PIN, gpioModePushPull, 0);	//Neg diff mux
 	GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 0);	//Neg diff mux
 
+	GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 1);	//Pos diff mux
 
-	bool verified = adc_verify_communication();
-	if(verified == true){
-		GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 1);	//Pos diff mux
-		printf("\r\n--->Connected to ADC via SPI<---");
-		adc_configure_channels();
-	}
-	else{
-		printf("\r\n!!!No connection to ADC!!!");
-	}
+	adc_verify_communication();
 
 	LETIMER_setup();
 	NVIC_EnableIRQ(LETIMER0_IRQn);
@@ -212,8 +211,7 @@ int main(void){
   while(1){
 	 //Read ADC Interrupt
 	 if(readFlag == 1){
-			printf("\n\r collecting new data.");
-		 	 mux_select(1);
+		 	mux_select(1);
 			adc_configure_channels();
 			uint32_t xread = adc_read_data();
 
@@ -233,7 +231,6 @@ int main(void){
 			new_data.temp = tempread;
 			new_data.measureNum = measurementCount;
 
-
 			printf("\n\n\r ---Read #%d---", measurementCount);
 			printf("\r\n x = %lu V", data_ptr->xaxis);
 			printf("\r\n y = %lu V", data_ptr->yaxis);
@@ -243,6 +240,13 @@ int main(void){
 			readFlag = 0;
 			NVIC_EnableIRQ(LETIMER0_IRQn);
 	 }
+	 switch(operation_mode){
+	 	 case MODE_FIELD:			//store data
+	 		 break;
+	 	 case MODE_DEMO:			//send data and forget it
+	 		 break;
+	 }
+
 	 packet_handler();
 	 if(ble_soft_timer_Flag){
 		 sendData(data_ptr);

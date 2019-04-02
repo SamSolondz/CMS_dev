@@ -43,6 +43,7 @@
 #include "adc_functions.h"
 
 extern ble_soft_timer_Flag;
+extern record_time;
 
 void LETIMER_setup(void);
 void sendData(recorded_data * data_ptr);

@@ -1,16 +1,19 @@
 #include "adc_functions.h"
 
 enum spi_slave adc = ADC_SEL;
-bool adc_verify_communication(){
+void adc_verify_communication(){
 	  uint8_t TxBuffer[3] = {COMMS_READ_ID, 0x00, 0x00};
 	  uint8_t RxBuffer[3] = {0x00, 0x00, 0x00};
 
 	  spi_write_uint8(3, TxBuffer, RxBuffer, adc);
 
-	  if(RxBuffer[1] == ID_VAL1 && (RxBuffer[2] >> 4) == ID_VAL0)
-		  return true;
+	  if(RxBuffer[1] == ID_VAL1 && (RxBuffer[2] >> 4) == ID_VAL0){
+			printf("\r\n--->Connected to ADC via SPI<---");
+			adc_configure_channels();
+	  }
+
 	  else
-		  return false;
+		  printf("\r\n!!!No connection to ADC!!!");
 };
 
 void adc_configure_channels(){	//Write MSB first

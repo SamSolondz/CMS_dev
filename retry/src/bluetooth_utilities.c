@@ -137,6 +137,7 @@ void packet_handler(){
 			break;
 
 			//Telling MCU what mode we want
+
 			 /*     case gecko_evt_gatt_server_attribute_value_id:
 			    	  if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_Data)
 			    	    {
