@@ -51,9 +51,13 @@ uint8_t boot_to_dfu = 0;
 /*following 2 val currently unused*/
 uint32_t comp_flag;
 uint32_t comparator;
+int temp[4];
 
 /* Test data*/
 uint32_t data_out = 0x12358cdf;
+PACKSTRUCT(struct mode_t{
+	int data_in;
+});
 
 void sendData(recorded_data * data_ptr)
 {
@@ -119,46 +123,34 @@ void packet_handler(){
 				  * tells the timer to run for 1 second (32.768 kHz oscillator), the 2nd parameter is
 				  * the timer handle and the 3rd parameter '0' tells the timer to repeat continuously until
 				  * stopped manually.*/
-				 	 gecko_cmd_hardware_set_soft_timer(3 * 32768, 0, 0);
-				 	 printf("\n soft timer STARTED\n");
+				 	// gecko_cmd_hardware_set_soft_timer(32768, 0, 0);
+				 	// printf("\n soft timer STARTED\n");
 			 }
 
 			 else if (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x00)
 			 {
 				 /* Indications have been turned OFF - stop the timer. */
-				 gecko_cmd_hardware_set_soft_timer(0, 0, 0);
-				 printf("\n soft timer STOPED\n");
+				 //gecko_cmd_hardware_set_soft_timer(0, 0, 0);
+				// printf("\n soft timer STOPED\n");
 			 }
 		   }
 		   break;
-
-		case gecko_evt_hardware_soft_timer_id:
-			ble_soft_timer_Flag = 1;
-			break;
+//
+//		case gecko_evt_hardware_soft_timer_id:
+//			ble_soft_timer_Flag = 1;
+//			break;
 
 			//Telling MCU what mode we want
 
-			 /*     case gecko_evt_gatt_server_attribute_value_id:
-			    	  if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_Data)
-			    	    {
-			    		  struct data_in_t* data_in = (struct data_in_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
-			    		  comparator = (data_in->dataIn)^data_out;
-			    		  if (comparator == 0)
-		    		  {
-			    			  comp_flag = 0;
-			    		  }
-			    		  else
-			    		  {
-			    			  comp_flag = 1;
-			    		  }
-			       	   printf("Sent Data: %32d\r\n", data_out);
-			    	   printf("Recieved Data: %32d\r\n", data_in->dataIn);
-			    	   printf("Compared Value: %32d\r\n", comparator);
-			    	   printf("comp flag: %32d\r\n", comp_flag);
-			    	   //sendData();
-			    	  }
-			    	  break;
-		*/
+		case gecko_evt_gatt_server_attribute_value_id:
+			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_mode)
+			    {
+			    struct mode_t* mode_bit = (struct mode_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
+
+			    //temp = mode_bit->data_in;
+			    //operation_mode = temp[0];
+			    }
+			  break;
 
 
 		case gecko_evt_le_connection_closed_id:

@@ -45,6 +45,8 @@
 extern ble_soft_timer_Flag;
 extern record_time;
 
+//extern operation_mode;
+
 void LETIMER_setup(void);
 void sendData(recorded_data * data_ptr);
 void packet_handler();

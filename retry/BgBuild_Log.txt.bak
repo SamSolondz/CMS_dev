@@ -6,7 +6,4 @@ Executing: bgbuild.exe (C:\SiliconLabs\SimplicityStudio\v4\developer\sdks\gecko_
 Standard output
 ALL OK
 
-Error/Warning output
-WARNING: 90ff66ab66064f6d8dd4d34d298917e5 length attribute is 1 but actual value length is 4. 1 will be used.
-
 

@@ -59,6 +59,11 @@ appPlugin: stack_bridge=false
       <value length="20" type="utf-8" variable_length="false"/>
       <properties indicate="true" indicate_requirement="optional"/>
     </characteristic>
+    <characteristic id="mode" name="MODE" sourceId="custom.type" uuid="e4904ac9-30b2-4b3c-af39-5c47aa3644ee">
+      <informativeText>Custom characteristic</informativeText>
+      <value length="1" type="utf-8" variable_length="false">0x00</value>
+      <properties write="true" write_requirement="optional"/>
+    </characteristic>
   </service>
   <service advertise="false" name="Silicon Labs OTA" requirement="mandatory" sourceId="com.silabs.service.ota" type="primary" uuid="1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0">
     <informativeText>Abstract: The Silicon Labs OTA Service enables over-the-air firmware update of the device. </informativeText>
