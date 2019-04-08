@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-bool flash_verify_communication();
+void flash_verify_communication();
 void flash_reset();
 uint8_t flash_read_status_register(int status_register);
 bool flash_read_busy_bit();

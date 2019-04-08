@@ -6,6 +6,8 @@
  *
  */
 #include "flash_functions.h"
+#include "pin_def.h"
+
 
 enum spi_slave flash = FLASH_SEL;
 
@@ -17,21 +19,26 @@ void flash_reset(){	//5us~500us reset period
 }
 
 /*Read the JEDEC ID to verify SPI communication*/
-bool flash_verify_communication(){
+void flash_verify_communication(){
 	  uint8_t TxBuffer[5] = {READ_JEDEC, 0x00, 0x00, 0x00, 0x00};
 	  uint8_t RxBuffer[5] = {0x00, 0x00, 0x00, 0x00, 0x00}; //Dummy, Dummy, MfrID, DeviceID_1, DeviceID_0
+
+	  //TODO: Change to flash when correct pin connections
 	  spi_write_uint8(5, TxBuffer, RxBuffer, flash);
 
-	  if(RxBuffer[2] == JEDEC_MFR_ID && RxBuffer[3] == JEDEC_ID_VAL1 && RxBuffer[4] == JEDEC_ID_VAL0)
-		  return true;
+	  if(RxBuffer[2] == JEDEC_MFR_ID && RxBuffer[3] == JEDEC_ID_VAL1 && RxBuffer[4] == JEDEC_ID_VAL0){
+		  GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
+		  printf("\r\n--->Connected to FLASH via SPI<---");
+	  }
 	  else
-		  return false;
+		  printf("\r\n!!!No connection to FLASH!!!");
+
 };
 
 /*Read a Status Register
  *(Protection Register, Configuration Register, or Status Register)*/
 uint8_t flash_read_status_register(int status_register){
-	//Choose the status register to write too=
+	//Choose the status register to write too
 	uint8_t sr_address;
 	switch(status_register){
 	case 1:
@@ -130,15 +137,26 @@ void flash_block_erase(uint16_t page_address){
 }
 
 /*Load program data into the Data buffer for writing data*/
+//void flash_load_program_data(uint16_t column_address, recorded_data *data_ptr){
 void flash_load_program_data(uint16_t column_address){
 	uint8_t col_addr1 = (column_address >> 8);
 	uint8_t col_addr0 = (column_address & 0x00ff);
 
 	flash_write_enable();
-	uint8_t TxBuffer[4] = {FLASH_LOAD_PROGRAM_DATA, col_addr1, col_addr1,};
+//	uint8_t TxBuffer[4] = {FLASH_LOAD_PROGRAM_DATA, col_addr1, col_addr1,
+//							data_ptr->xaxis,
+//							data_ptr->yaxis,
+//							data_ptr->zaxis,
+//							data_ptr->temp};
+//
+//	uint8_t RxBuffer[4] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+	uint8_t TxBuffer[4] = {FLASH_LOAD_PROGRAM_DATA, col_addr1, col_addr1, 0xAA};
 	uint8_t RxBuffer[4] = {0x00, 0x00, 0x00, 0x00};
 	spi_write_uint8(4, TxBuffer, RxBuffer, flash);
 }
+
+
 /*Write the data in the Data buffer*/
 void flash_program_execute(uint16_t page_address){
 	uint8_t page_addr1 = (page_address >> 8);

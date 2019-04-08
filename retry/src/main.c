@@ -46,6 +46,8 @@
 #define ONE_SECOND_TIMER_COUNT                      13672
 #define RECORD_ONE_MINUTE							1966080
 #define RECORD_ONE_SECOND							32768
+#define PULSE_HIGH								5 * 32768
+
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
@@ -58,9 +60,15 @@
 uint32_t ms_counter = 0;
 int measurementCount = 1;			//Will be used to calculate time for each
 int readFlag = 0;
+
 int ble_soft_timer_Flag = 0;
 int operation_mode = 0;						//Default to field mode
 int record_time = RECORD_ONE_SECOND;
+
+int pulseFlag = 0;
+uint32_t pulse_counter = 0;
+int pulse_topval = 0;
+bool set_reset = false;
 
 
 uint8_t bluetooth_stack_heap[DEFAULT_BLUETOOTH_HEAP(MAX_CONNECTIONS)];
@@ -155,6 +163,10 @@ void mux_select(int select){
 	}
 }
 
+void SR_toggle(){
+
+}
+
 
 void LETIMER0_IRQHandler(void) {
 	  // Clear the interrupt flag
@@ -166,9 +178,17 @@ void LETIMER0_IRQHandler(void) {
 			ms_counter = 0;
 			NVIC_DisableIRQ(LETIMER0_IRQn);
 		}
+//		if(set_reset == true){
+//			if(pulse_counter < pulse_topval)
+//				pulse_counter++;
+//			else{
+//				GPIO_PinOutSet(SR_PORT, SR_PIN);
+//				pulse_counter = 0;
+//				set_reset = false;
+//			}
+//		}
 
 }
-
 
 
 
@@ -188,11 +208,16 @@ int main(void){
 	//Set GPIO pins//
 	GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
 	GPIO_PinModeSet(MUX_NEG_PORT, MUX_NEG_PIN, gpioModePushPull, 0);	//Neg diff mux
-	GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 0);	//Neg diff mux
+	GPIO_PinModeSet(SR_PORT, SR_PIN, gpioModePushPull, 1);	//SR pin
 
-	GPIO_PinModeSet(LED0_PORT, LED0_PIN, gpioModePushPull, 1);	//Pos diff mux
+	GPIO_PinModeSet(LED_POWER_PORT, LED_POWER_PIN, gpioModePushPull, 0);
+	GPIO_PinModeSet(LED_BLE_PORT, LED_BLE_PIN, gpioModePushPull, 0);
+
+	GPIO_PinOutSet(LED_POWER_PORT, LED_POWER_PIN);
+
 
 	adc_verify_communication();
+	flash_verify_communication();
 
 	LETIMER_setup();
 	NVIC_EnableIRQ(LETIMER0_IRQn);
@@ -206,6 +231,11 @@ int main(void){
   new_data.zaxis = 0x0;
   new_data.temp = 0xDEADBEEF;
   new_data.measureNum = 0;
+
+  //Trigger a SR
+  set_reset = false;
+  GPIO_PinOutClear(SR_PORT, SR_PIN);
+  GPIO_PinOutSet(SR_PORT, SR_PIN);
 
   //Infinite loop
   while(1){
