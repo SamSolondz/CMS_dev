@@ -13,4 +13,13 @@ void spi_write_cal(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr, int de
 void spi_read_data_reg(int number_of_bytes, uint8_t * TXptr, uint8_t * RXptr, int device);
 void read_offset_gain();
 
+typedef struct {
+	uint32_t xaxis;
+	uint32_t yaxis;
+	uint32_t zaxis;
+	uint32_t temp;
+	int	measureNum; 	//Will be used to timestamp data on Android app.
+}recorded_data;
+
+
 #endif

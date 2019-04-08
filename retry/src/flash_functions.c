@@ -215,5 +215,8 @@ uint8_t * flash_read_excute_BUF1(uint16_t column_address, int byte_count){
 	return data_read;
 }
 
+//void flash_write_data(new_data *data){
+//}
+
 
 

@@ -25,12 +25,5 @@ float adc_calculate_float_temp(uint32_t temp_read);
 
 void adc_calibrate();
 
-typedef struct {
-	uint32_t xaxis;
-	uint32_t yaxis;
-	uint32_t zaxis;
-	uint32_t temp;
-	int	measureNum; 	//Will be used to timestamp data on Android app.
-}recorded_data;
 
 #endif

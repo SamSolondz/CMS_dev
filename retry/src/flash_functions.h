@@ -9,6 +9,7 @@
 
 #include "flash_defines.h"
 #include "spi_functions.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 

@@ -9960,7 +9960,7 @@ OUTPUT(retry.axf elf32-littlearm)
  .debug_aranges
                 0x00000a60       0x18 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\radio\rail_lib\autogen\librail_release\librail_config_bgm111a256v2_gcc.a(rail_config.o)
 
-.debug_line     0x00000000     0x94aa
+.debug_line     0x00000000     0x94bd
  .debug_line    0x00000000      0x198 ./application_properties.o
  .debug_line    0x00000198      0x190 ./gatt_db.o
  .debug_line    0x00000328      0x269 ./init_app.o
@@ -9985,12 +9985,12 @@ OUTPUT(retry.axf elf32-littlearm)
  .debug_line    0x00006c48      0x42a ./src/adc_functions.o
  .debug_line    0x00007072      0x6a9 ./src/bluetooth_utilities.o
  .debug_line    0x0000771b      0x5b8 ./src/flash_functions.o
- .debug_line    0x00007cd3      0x791 ./src/main.o
- .debug_line    0x00008464      0x364 ./src/retargetio.o
- .debug_line    0x000087c8      0x4ea ./src/retargetserial.o
- .debug_line    0x00008cb2      0x3e4 ./src/spi_functions.o
- .debug_line    0x00009096      0x24a C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\radio\rail_lib\autogen\librail_release\librail_config_bgm111a256v2_gcc.a(rail_pa_curves.o)
- .debug_line    0x000092e0      0x1ca C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\radio\rail_lib\autogen\librail_release\librail_config_bgm111a256v2_gcc.a(rail_config.o)
+ .debug_line    0x00007cd3      0x7a4 ./src/main.o
+ .debug_line    0x00008477      0x364 ./src/retargetio.o
+ .debug_line    0x000087db      0x4ea ./src/retargetserial.o
+ .debug_line    0x00008cc5      0x3e4 ./src/spi_functions.o
+ .debug_line    0x000090a9      0x24a C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\radio\rail_lib\autogen\librail_release\librail_config_bgm111a256v2_gcc.a(rail_pa_curves.o)
+ .debug_line    0x000092f3      0x1ca C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\radio\rail_lib\autogen\librail_release\librail_config_bgm111a256v2_gcc.a(rail_config.o)
 
 .debug_str      0x00000000     0xd622
  .debug_str     0x00000000      0x238 ./application_properties.o
