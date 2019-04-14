@@ -32,7 +32,6 @@
 #include "retargetserial.h"//
 #include "math.h"//
 
-
 #include "adc_defines.h" //
 #include "defines.h"//
 #include "spi_functions.h" //
@@ -45,7 +44,7 @@
 #define ONE_MILLISECOND_BASE_VALUE_COUNT            1000
 #define ONE_SECOND_TIMER_COUNT                      13672
 #define RECORD_ONE_MINUTE							1966080
-#define RECORD_ONE_SECOND							32768
+#define RECORD_FIVE_SECOND							5 * 32768
 #define PULSE_HIGH								5 * 32768
 
 
@@ -58,17 +57,23 @@
 
 
 uint32_t ms_counter = 0;
-int measurementCount = 1;			//Will be used to calculate time for each
 int readFlag = 0;
 
 int ble_soft_timer_Flag = 0;
-int operation_mode = 0;						//Default to field mode
-int record_time = RECORD_ONE_SECOND;
+int operation_mode = MODE_FIELD;						//Default to field mode
+int record_time = RECORD_FIVE_SECOND;
 
 int pulseFlag = 0;
 uint32_t pulse_counter = 0;
 int pulse_topval = 0;
 bool set_reset = false;
+
+uint16_t current_page = 0;
+uint16_t current_column = 0;
+uint32_t measurementCount = 1;
+
+bool android_connection = false;
+
 
 
 uint8_t bluetooth_stack_heap[DEFAULT_BLUETOOTH_HEAP(MAX_CONNECTIONS)];
@@ -190,15 +195,40 @@ void LETIMER0_IRQHandler(void) {
 
 }
 
+void OFFLOAD_DATA(){
+	NVIC_DisableIRQ(LETIMER0_IRQn);
+	uint32_t page_read = FLASH_DATA_PAGE_START;
+	uint32_t column_read = 0x0;
 
+	uint32_t data_read = flash_read_data(page_read, column_read);
+	NVIC_EnableIRQ(LETIMER0_IRQn);
+};
+
+void CLEAR_DATA() {
+	NVIC_DisableIRQ(LETIMER0_IRQn);
+
+	uint32_t erase_page = FLASH_DATA_PAGE_START;
+
+	while(erase_page <= current_page){
+		flash_block_erase(erase_page);
+		erase_page++;
+	}
+	//Reset current_page to start of data page
+	current_page = FLASH_DATA_PAGE_START;
+	current_column = 0x0;
+
+	//Update page and column in FLASH
+	flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
+	flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
+
+	NVIC_EnableIRQ(LETIMER0_IRQn);
+};
 
 int main(void){
 	/* Chip errata */
 	initMcu(); 		//Initialize device
 	initBoard(); 	//Initialize board
 	initApp();		//Initialize application
-
-
 
 	gecko_init(&config);
 	RETARGET_SerialInit();
@@ -215,9 +245,53 @@ int main(void){
 
 	GPIO_PinOutSet(LED_POWER_PORT, LED_POWER_PIN);
 
+	//adc_verify_communication();
+	//flash_verify_communication();
 
-	adc_verify_communication();
-	flash_verify_communication();
+	operation_mode = flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_MODE);
+	if(operation_mode == MODE_FIELD)
+	{
+		//Set the column and page to last recorded
+		current_column = flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_COLUMN);
+		current_page = flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_PAGE);
+	}
+	else
+	{
+		//Restart column and page to zero (reset)
+		current_column = 0x0;
+		current_page = FLASH_DATA_PAGE_START;
+		flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
+		flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
+	}
+
+#ifdef COLUMN_TEST
+	for(int i = 0; i < 700; i++)
+	{
+		flash_write_data32(0xABCD, &current_column, &current_page);
+		column_test.xaxis = current_column;
+		if(current_column == FLASH_FINAL_PAGE_ADDR){
+			column_test.xaxis = current_column;
+			GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
+			break;
+			//while(1){sendData(&column_test);}
+		}
+
+	}
+	GPIO_PinOutClear(LED_POWER_PORT, LED_POWER_PIN);
+#endif
+
+#ifdef FLASH_READ_TEST
+	uint32_t flash_read = (data_read[0] + (data_read[1]<<8)
+						+(data_read[2]<<16) + (data_read[3] << 24));
+
+
+	recorded_data flash_test;
+	flash_test.xaxis = flash_read;
+	flash_test.yaxis = 0xAAABBB;
+	flash_test.zaxis = 0x0;
+	flash_test.temp = 0x0;
+#endif
+
 
 	LETIMER_setup();
 	NVIC_EnableIRQ(LETIMER0_IRQn);
@@ -237,9 +311,10 @@ int main(void){
   GPIO_PinOutClear(SR_PORT, SR_PIN);
   GPIO_PinOutSet(SR_PORT, SR_PIN);
 
+
   //Infinite loop
   while(1){
-	 //Read ADC Interrupt
+	//Read ADC Interrupt
 	 if(readFlag == 1){
 		 	mux_select(1);
 			adc_configure_channels();
@@ -256,7 +331,6 @@ int main(void){
 			adc_configure_channels();
 			uint32_t tempread = adc_read_temperature();
 
-
 			//Store measurements
 			new_data.xaxis = xread;
 			new_data.yaxis = yread;
@@ -265,7 +339,7 @@ int main(void){
 			new_data.measureNum = measurementCount;
 			measurementCount++;
 
-			printf("\n\n\r ---Read #%d---", measurementCount);
+			printf("\n\n\r ---Read #%lu---", measurementCount);
 			printf("\r\n x = %f V", adc_calculate_float(data_ptr->xaxis));
 			printf("\r\n y = %f V", adc_calculate_float(data_ptr->yaxis));
 			printf("\r\n z = %f V", adc_calculate_float(data_ptr->zaxis));
@@ -274,21 +348,39 @@ int main(void){
 			readFlag = 0;
 			NVIC_EnableIRQ(LETIMER0_IRQn);
 	 }
+
+	//packet_handler();
+
+	//If connected to an Android device, pause data collection
+	if(android_connection)
+	{
+		NVIC_DisableIRQ(LETIMER0_IRQn);
+		ms_counter = 0;
+	}
+	//TODO: Re-enable IRQ in appropriate place
+
 	 switch(operation_mode){
 	 	 case MODE_FIELD:			//store data
+	 		 record_time = RECORD_ONE_MINUTE;//can be moved to user-input handler
+	 		 flash_write_data32(data_ptr->measureNum, &current_column, &current_page);
+	 		 flash_write_data32(data_ptr->xaxis, &current_column, &current_page);
+	 		 flash_write_data32(data_ptr->yaxis, &current_column, &current_page);
+	 		 flash_write_data32(data_ptr->zaxis, &current_column, &current_page);
+	 		 flash_write_data32(data_ptr->temp, &current_column, &current_page);
 	 		 break;
 	 	 case MODE_DEMO:			//send data and forget it
+	 		 NVIC_DisableIRQ(LETIMER0_IRQn);
+	 		 record_time = RECORD_FIVE_SECOND; //can be moved to user-input handler
+	 		 //sendData(data_ptr);
+	 		 NVIC_EnableIRQ(LETIMER0_IRQn);
 	 		 break;
 	 }
 
-//	 packet_handler();
-//	 if(ble_soft_timer_Flag){
-//		 sendData(data_ptr);
-//		 ble_soft_timer_Flag = 0;
-//	 }
+	//sendData(&column_test);
+
 
 	 //Go to sleep
-	 EMU_EnterEM2(1);
+	 //EMU_EnterEM2(1);
 
   }
  };

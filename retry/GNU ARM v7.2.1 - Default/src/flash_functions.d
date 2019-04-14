@@ -1,5 +1,4 @@
-src/flash_functions.o: ../src/flash_functions.c ../src/flash_functions.h \
- ../src/flash_defines.h ../src/spi_functions.h \
+src/flash_functions.o: ../src/flash_functions.c ../src/spi_functions.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/em_device.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/bgm111a256v2.h \
@@ -48,11 +47,8 @@ src/flash_functions.o: ../src/flash_functions.c ../src/flash_functions.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_gpio.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_bus.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_assert.h \
- ../src/adc_defines.h ../src/pin_def.h
-
-../src/flash_functions.h:
-
-../src/flash_defines.h:
+ ../src/adc_defines.h ../src/flash_functions.h ../src/flash_defines.h \
+ ../src/pin_def.h
 
 ../src/spi_functions.h:
 
@@ -153,5 +149,9 @@ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_b
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_assert.h:
 
 ../src/adc_defines.h:
+
+../src/flash_functions.h:
+
+../src/flash_defines.h:
 
 ../src/pin_def.h:

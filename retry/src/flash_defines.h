@@ -32,9 +32,24 @@
 #define	FLASH_BLOCK_ERASE	0xd8
 
 #define FLASH_LOAD_PROGRAM_DATA	0x02
+#define FLASH_RANDOM_LOAD_PROGRAM_DATA 0x84
 #define FLASH_PROGRAM_EXECUTE	0x10
 
 #define FLASH_PAGE_DATA_READ	0x13
 #define FLASH_READ_DATA			0x03
+
+#define FLASH_FINAL_PAGE_ADDR	0x7F8
+
+#define FLASH_BUSY_BIT			0x01
+
+#define FLASH_DATA_PAGE_START	0x01
+
+//Page where params are kept
+#define FLASH_PARAM_PAGE		0x00
+//Columns in param page
+#define FLASH_LAST_COLUMN		0x00
+#define	FLASH_LAST_PAGE			0x04
+#define FLASH_START_TIME		0x08
+#define FLASH_LAST_MODE			0x0C
 
 #endif /* INC_FLASH_DEFINES_H_ */
