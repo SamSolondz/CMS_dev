@@ -206,7 +206,7 @@ void OFFLOAD_DATA(){
 
 void CLEAR_DATA() {
 	NVIC_DisableIRQ(LETIMER0_IRQn);
-
+	ms_counter = 0;
 	uint32_t erase_page = FLASH_DATA_PAGE_START;
 
 	while(erase_page <= current_page){
