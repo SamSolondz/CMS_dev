@@ -62,8 +62,11 @@ int measurementCount = 1;			//Will be used to calculate time for each
 int readFlag = 0;
 
 int ble_soft_timer_Flag = 0;
-int operation_mode = 0;						//Default to field mode
+bool operation_mode = 0;						//Default to field mode
+bool offload_flag = 0;
+bool clear_flag = 0;
 int record_time = RECORD_ONE_SECOND;
+
 
 int pulseFlag = 0;
 uint32_t pulse_counter = 0;
@@ -203,18 +206,18 @@ int main(void){
 	gecko_init(&config);
 	RETARGET_SerialInit();
 	usart_setup();	//CMU_clock_enable happens here, must occur before gpio/letimersetup
-	packet_handler();
+	//packet_handler();
 	//	printf("\n\rHello World!\r\n");
 
 	//Set GPIO pins//
 	GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
 	GPIO_PinModeSet(MUX_NEG_PORT, MUX_NEG_PIN, gpioModePushPull, 0);	//Neg diff mux
-	GPIO_PinModeSet(SR_PORT, SR_PIN, gpioModePushPull, 0);	//SR pin
+//	GPIO_PinModeSet(SR_PORT, SR_PIN, gpioModePushPull, 1);	//SR pin
 
-	GPIO_PinModeSet(LED_POWER_PORT, LED_POWER_PIN, gpioModePushPull, 0);
-	GPIO_PinModeSet(LED_BLE_PORT, LED_BLE_PIN, gpioModePushPull, 0);
-
-	GPIO_PinOutSet(LED_POWER_PORT, LED_POWER_PIN);
+//	GPIO_PinModeSet(LED_POWER_PORT, LED_POWER_PIN, gpioModePushPull, 0);
+//	GPIO_PinModeSet(LED_BLE_PORT, LED_BLE_PIN, gpioModePushPull, 0);
+//
+//	GPIO_PinOutSet(LED_POWER_PORT, LED_POWER_PIN);
 
 
 	adc_verify_communication();
@@ -234,16 +237,18 @@ int main(void){
   new_data.measureNum = 0;
 
   //Trigger a SR
-  set_reset = false;
-  int i = 0;
-  GPIO_PinOutSet(SR_PORT, SR_PIN);
-  for (i = 0; i < 100000; i++){}
-   GPIO_PinOutClear(SR_PORT, SR_PIN);
+//  set_reset = false;
+//  int i = 0;
+//  GPIO_PinOutClear(SR_PORT, SR_PIN);
+//
+// // for (i = 0; i < 100000; i++){}
+//  	  GPIO_PinOutSet(SR_PORT, SR_PIN);
 
   //Infinite loop
   while(1){
 	 //Read ADC Interrupt
 	  packet_handler();
+	  get_time();
 	 if(readFlag == 1){
 		 	mux_select(1);
 			adc_configure_channels();
@@ -260,6 +265,16 @@ int main(void){
 			adc_configure_channels();
 			uint32_t tempread = adc_read_temperature();
 
+			new_data.xaxis = 0x753FDCBA;
+			sendData(data_ptr);
+
+//			for(i =0; i < 100000; i++){
+//				if(i%1000 == 0)
+//					new_data.xaxis = 0x00;
+//				else
+//					new_data.xaxis = 0xDEADBEEF;
+//			}
+
 
 			//Store measurements
 			new_data.xaxis = xread;
@@ -269,30 +284,50 @@ int main(void){
 			new_data.measureNum = measurementCount;
 			measurementCount++;
 
-			printf("\n\n\r ---Read #%d---", measurementCount);
-			printf("\r\n x = %f V", adc_calculate_float(data_ptr->xaxis));
-			printf("\r\n y = %f V", adc_calculate_float(data_ptr->yaxis));
-			printf("\r\n z = %f V", adc_calculate_float(data_ptr->zaxis));
-			printf("\r\n Temperature = %.3f C    .", adc_calculate_float_temp(data_ptr->temp));
+//			printf("\n\n\r ---Read #%d---", measurementCount);
+//			printf("\r\n x = %f V", adc_calculate_float(data_ptr->xaxis));
+//			printf("\r\n y = %f V", adc_calculate_float(data_ptr->yaxis));
+//			printf("\r\n z = %f V", adc_calculate_float(data_ptr->zaxis));
+//			printf("\r\n Temperature = %.3f C    .", adc_calculate_float_temp(data_ptr->temp));
 
 			readFlag = 0;
 			NVIC_EnableIRQ(LETIMER0_IRQn);
 	 }
+	 else
+		 {new_data.xaxis = 0xABCDF357;
+	 	 sendData(data_ptr);
+	 	 readFlag = 1;
+		 }
 	 switch(operation_mode){
 	 	 case MODE_FIELD:			//store data
+	 		 record_time = RECORD_ONE_MINUTE;
+	 		 //set data storage flag
 	 		 break;
 	 	 case MODE_DEMO:			//send data and forget it
+	 		 record_time = RECORD_ONE_SECOND;
 	 		 break;
+	 }
+	 if(offload_flag)
+	 {
+		 //OFFLOAD_DATA();
+		 printf("\n\r send all");
+		 offload_flag = 0;
+	 }
+	 if(clear_flag)
+	 {
+		 //CLEAR_DATA();
+		 printf("\n\r delete all");
+		 clear_flag = 0;
 	 }
 
 //	 packet_handler();
 //	 if(ble_soft_timer_Flag){
-		 sendData(data_ptr);
+//		 sendData(data_ptr);
 //		 ble_soft_timer_Flag = 0;
 //	 }
 
 	 //Go to sleep
-	// EMU_EnterEM2(1);
+//	EMU_EnterEM2(1);
 
   }
  };

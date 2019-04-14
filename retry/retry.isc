@@ -35,7 +35,7 @@ appPlugin: stack_bridge=false
     <informativeText>Abstract: The generic_access service contains generic information about the device. All available Characteristics are readonly. </informativeText>
     <characteristic id="device_name" name="Device Name" sourceId="org.bluetooth.characteristic.gap.device_name" uuid="2A00">
       <informativeText/>
-      <value length="4" type="utf-8" variable_length="false">SNOW</value>
+      <value length="3" type="utf-8" variable_length="false">SUN</value>
       <properties read="true" read_requirement="optional" write="true" write_requirement="optional"/>
     </characteristic>
     <characteristic name="Appearance" sourceId="org.bluetooth.characteristic.gap.appearance" uuid="2A01">
@@ -56,12 +56,22 @@ appPlugin: stack_bridge=false
     <informativeText>Custom service</informativeText>
     <characteristic id="Data" name="SendData" sourceId="custom.type" uuid="90ff66ab-6606-4f6d-8dd4-d34d298917e5">
       <informativeText>Custom characteristic</informativeText>
-      <value length="20" type="utf-8" variable_length="false"/>
+      <value length="8" type="utf-8" variable_length="false"/>
       <properties indicate="true" indicate_requirement="optional"/>
     </characteristic>
     <characteristic id="mode" name="MODE" sourceId="custom.type" uuid="e4904ac9-30b2-4b3c-af39-5c47aa3644ee">
       <informativeText>Custom characteristic</informativeText>
-      <value length="1" type="utf-8" variable_length="false">0x00</value>
+      <value length="4" type="utf-8" variable_length="false">0x00</value>
+      <properties read="true" read_requirement="optional" write="true" write_requirement="optional"/>
+    </characteristic>
+    <characteristic id="offload" name="Offload" sourceId="custom.type" uuid="5360a266-325c-409a-b5af-e03cd5f6f7ab">
+      <informativeText>Custom characteristic</informativeText>
+      <value length="4" type="utf-8" variable_length="true">0x00</value>
+      <properties write="true" write_requirement="optional"/>
+    </characteristic>
+    <characteristic id="ClearMem" name="ClearMem" sourceId="custom.type" uuid="32ab1e71-5d16-4d3e-baa5-e5919c139ce0">
+      <informativeText>Custom characteristic</informativeText>
+      <value length="4" type="utf-8" variable_length="false">0x00</value>
       <properties write="true" write_requirement="optional"/>
     </characteristic>
   </service>

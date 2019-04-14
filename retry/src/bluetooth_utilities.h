@@ -24,33 +24,22 @@
 
 #include "em_emu.h"
 #include "em_gpio.h"
-//#include "em_common.h"
 
 #include "em_cmu.h"
-//#include "em_timer.h"
 #include "em_letimer.h"
-//#include "ecode.h" //
-
-//#include <time.h>
-//#include <stdio.h>
-//#include <stdbool.h>
-//#include <stdint.h>
-//#include <inttypes.h>
-//#include "infrastructure.h"//
-//#include "retargetserial.h"//
-//#include "math.h"//
 
 #include "adc_functions.h"
 
 extern ble_soft_timer_Flag;
 extern record_time;
-
-//extern operation_mode;
+extern bool operation_mode;
+extern bool offload_flag;
+extern bool clear_flag;
 
 void LETIMER_setup(void);
 void sendData(recorded_data * data_ptr);
 void packet_handler();
-
+void get_time();
 
 
 
