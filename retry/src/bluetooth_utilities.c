@@ -43,6 +43,23 @@ void LETIMER_setup(void){
 	NVIC_EnableIRQ(LETIMER0_IRQn);
 }
 
+void get_time() {
+
+	uint32_t days, hours, mins, sec, ms;
+
+	struct gecko_msg_hardware_get_time_rsp_t *time;
+
+	time = gecko_cmd_hardware_get_time();
+
+	days = time->seconds/60/60/25;
+	hours = time-> seconds/60/60 %24;
+	mins = time-> seconds/60 %60;
+	sec = time-> seconds % 60;
+	ms = time->ticks * 1000/32768;
+
+//	printf("%03d-%02d:%02d:%02d.%03d \r",days,hours,mins,sec,ms);
+
+}
 
 
 // Flag for indicating DFU Reset must be performed
@@ -51,13 +68,22 @@ uint8_t boot_to_dfu = 0;
 /*following 2 val currently unused*/
 uint32_t comp_flag;
 uint32_t comparator;
-int temp[4];
+//int temp;
 
 /* Test data*/
 uint32_t data_out = 0x12358cdf;
 PACKSTRUCT(struct mode_t{
 	int data_in;
 });
+
+PACKSTRUCT(struct offload_t{
+	int offload;
+});
+
+PACKSTRUCT(struct clear_t{
+	int clear;
+});
+
 
 void sendData(recorded_data * data_ptr)
 {
@@ -68,7 +94,7 @@ void sendData(recorded_data * data_ptr)
 	uint32_t temp  = data_ptr->temp;
 
 	uint8_t flag = 0xff;
-	uint8_t tempBuffer[20];
+	uint8_t tempBuffer[8];//should be 40
 	uint8_t *p = tempBuffer;
 
 
@@ -85,7 +111,7 @@ void sendData(recorded_data * data_ptr)
 	UINT8_TO_BITSTREAM(p, flag);
 
 	 gecko_cmd_gatt_server_send_characteristic_notification(
-	      0xFF, gattdb_Data, 20, tempBuffer);
+	      0xFF, gattdb_Data, 8 , tempBuffer);
 }
 
 void packet_handler(){
@@ -123,34 +149,47 @@ void packet_handler(){
 				  * tells the timer to run for 1 second (32.768 kHz oscillator), the 2nd parameter is
 				  * the timer handle and the 3rd parameter '0' tells the timer to repeat continuously until
 				  * stopped manually.*/
-				 	// gecko_cmd_hardware_set_soft_timer(32768, 0, 0);
+				 	 gecko_cmd_hardware_set_soft_timer(32768, 0, 0);
 				 	// printf("\n soft timer STARTED\n");
 			 }
 
 			 else if (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x00)
 			 {
 				 /* Indications have been turned OFF - stop the timer. */
-				 //gecko_cmd_hardware_set_soft_timer(0, 0, 0);
+				 gecko_cmd_hardware_set_soft_timer(0, 0, 0);
 				// printf("\n soft timer STOPED\n");
 			 }
 		   }
 		   break;
-//
-//		case gecko_evt_hardware_soft_timer_id:
-//			ble_soft_timer_Flag = 1;
-//			break;
+
+		case gecko_evt_hardware_soft_timer_id:
+//			get_time();
+			break;
 
 			//Telling MCU what mode we want
 
-//		case gecko_evt_gatt_server_attribute_value_id:
-//			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_mode)
-//			    {
-//			    struct mode_t* mode_bit = (struct mode_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
-//
-//			    //temp = mode_bit->data_in;
-//			    //operation_mode = temp[0];
-//			    }
-//			  break;
+		case gecko_evt_gatt_server_attribute_value_id:
+			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_mode)
+			    {
+			    struct mode_t* mode_bit = (struct mode_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
+
+			    operation_mode = mode_bit->data_in;
+
+			    }
+			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_offload)
+			 {
+				 struct offload_t* off_bit = (struct offload_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
+
+				 offload_flag = off_bit->offload;
+			 }
+			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_ClearMem)
+			 {
+				 struct clear_t* clear_bit = (struct clear_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
+
+				 clear_flag = clear_bit->clear;
+			 }
+
+			 break;
 
 
 		case gecko_evt_le_connection_closed_id:
