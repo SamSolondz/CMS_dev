@@ -26,26 +26,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>emlib/em_assert.c</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_assert.c</locationURI>
-		</link>
-		<link>
-			<name>emlib/em_emu.c</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_emu.c</locationURI>
-		</link>
-		<link>
-			<name>emlib/em_letimer.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v1.1/platform/emlib/src/em_letimer.c</locationURI>
-		</link>
-		<link>
-			<name>emlib/em_system.c</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_system.c</locationURI>
-		</link>
-		<link>
 			<name>CMSIS/BGM1/startup_gcc_bgm1.s</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/platform/Device/SiliconLabs/BGM1/Source/GCC/startup_bgm1.S</locationURI>

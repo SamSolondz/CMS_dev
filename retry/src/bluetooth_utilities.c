@@ -68,7 +68,6 @@ uint8_t boot_to_dfu = 0;
 /*following 2 val currently unused*/
 uint32_t comp_flag;
 uint32_t comparator;
-//int temp;
 
 /* Test data*/
 uint32_t data_out = 0x12358cdf;
@@ -83,6 +82,7 @@ PACKSTRUCT(struct offload_t{
 PACKSTRUCT(struct clear_t{
 	int clear;
 });
+
 
 
 void sendData(recorded_data * data_ptr)
@@ -149,23 +149,23 @@ void packet_handler(){
 				  * tells the timer to run for 1 second (32.768 kHz oscillator), the 2nd parameter is
 				  * the timer handle and the 3rd parameter '0' tells the timer to repeat continuously until
 				  * stopped manually.*/
-				 	 gecko_cmd_hardware_set_soft_timer(32768, 0, 0);
+				 	// gecko_cmd_hardware_set_soft_timer(32768, 0, 0);
 				 	// printf("\n soft timer STARTED\n");
 			 }
 
 			 else if (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x00)
 			 {
 				 /* Indications have been turned OFF - stop the timer. */
-				 gecko_cmd_hardware_set_soft_timer(0, 0, 0);
+
+				 //gecko_cmd_hardware_set_soft_timer(0, 0, 0);
 				// printf("\n soft timer STOPED\n");
 			 }
 		   }
 		   break;
-
-		case gecko_evt_hardware_soft_timer_id:
-//			get_time();
-			break;
-
+//
+//		case gecko_evt_hardware_soft_timer_id:
+//			ble_soft_timer_Flag = 1;
+//			break;
 			//Telling MCU what mode we want
 
 		case gecko_evt_gatt_server_attribute_value_id:
@@ -174,22 +174,20 @@ void packet_handler(){
 			    struct mode_t* mode_bit = (struct mode_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
 
 			    operation_mode = mode_bit->data_in;
-
 			    }
 			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_offload)
-			 {
-				 struct offload_t* off_bit = (struct offload_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
+			    {
+			    struct offload_t* offload_bit = (struct offload_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
 
-				 offload_flag = off_bit->offload;
-			 }
+			    offload_flag = offload_bit->offload;
+			    }
 			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_ClearMem)
-			 {
-				 struct clear_t* clear_bit = (struct clear_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
+			    {
+			    struct clear_t* clear_bit = (struct clear_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
 
-				 clear_flag = clear_bit->clear;
-			 }
-
-			 break;
+			    clear_flag = clear_bit->clear;
+			    }
+			  break;
 
 
 		case gecko_evt_le_connection_closed_id:

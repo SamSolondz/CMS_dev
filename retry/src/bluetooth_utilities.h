@@ -36,6 +36,8 @@ extern bool operation_mode;
 extern bool offload_flag;
 extern bool clear_flag;
 
+//extern operation_mode;
+
 void LETIMER_setup(void);
 void sendData(recorded_data * data_ptr);
 void packet_handler();

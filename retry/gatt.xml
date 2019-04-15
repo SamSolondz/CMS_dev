@@ -42,6 +42,27 @@
       <value length="20" type="utf-8" variable_length="false"/>
       <properties indicate="true" indicate_requirement="optional"/>
     </characteristic>
+    
+    <!--MODE-->
+    <characteristic id="mode" name="MODE" sourceId="custom.type" uuid="e4904ac9-30b2-4b3c-af39-5c47aa3644ee">
+      <informativeText>Custom characteristic</informativeText>
+      <value length="4" type="utf-8" variable_length="false">0x00</value>
+      <properties read="true" read_requirement="optional" write="true" write_requirement="optional"/>
+    </characteristic>
+    
+    <!--Offload-->
+    <characteristic id="offload" name="Offload" sourceId="custom.type" uuid="5360a266-325c-409a-b5af-e03cd5f6f7ab">
+      <informativeText>Custom characteristic</informativeText>
+      <value length="4" type="utf-8" variable_length="true">0x00</value>
+      <properties write="true" write_requirement="optional"/>
+    </characteristic>
+    
+    <!--ClearMem-->
+    <characteristic id="ClearMem" name="ClearMem" sourceId="custom.type" uuid="32ab1e71-5d16-4d3e-baa5-e5919c139ce0">
+      <informativeText>Custom characteristic</informativeText>
+      <value length="4" type="utf-8" variable_length="true">0x00</value>
+      <properties write="true" write_requirement="optional"/>
+    </characteristic>
   </service>
   
   <!--Silicon Labs OTA-->

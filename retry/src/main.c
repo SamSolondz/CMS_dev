@@ -60,7 +60,9 @@ uint32_t ms_counter = 0;
 int readFlag = 0;
 
 int ble_soft_timer_Flag = 0;
-int operation_mode = MODE_FIELD;						//Default to field mode
+bool operation_mode = MODE_FIELD;						//Default to field mode
+bool offload_flag = 0;
+bool clear_flag = 0;
 int record_time = RECORD_FIVE_SECOND;
 
 int pulseFlag = 0;
@@ -73,6 +75,7 @@ uint16_t current_column = 0;
 uint32_t measurementCount = 1;
 
 bool android_connection = false;
+
 
 
 
@@ -235,12 +238,13 @@ int main(void){
 	gecko_init(&config);
 	RETARGET_SerialInit();
 	usart_setup();	//CMU_clock_enable happens here, must occur before gpio/letimersetup
-	printf("\n\rHello World!\r\n");
+	packet_handler();
+	//	printf("\n\rHello World!\r\n");
 
 	//Set GPIO pins//
 	GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
 	GPIO_PinModeSet(MUX_NEG_PORT, MUX_NEG_PIN, gpioModePushPull, 0);	//Neg diff mux
-	GPIO_PinModeSet(SR_PORT, SR_PIN, gpioModePushPull, 1);	//SR pin
+	GPIO_PinModeSet(SR_PORT, SR_PIN, gpioModePushPull, 0);	//SR pin
 
 	GPIO_PinModeSet(LED_POWER_PORT, LED_POWER_PIN, gpioModePushPull, 0);
 	GPIO_PinModeSet(LED_BLE_PORT, LED_BLE_PIN, gpioModePushPull, 0);
@@ -310,13 +314,15 @@ int main(void){
 
   //Trigger a SR
   set_reset = false;
-  GPIO_PinOutClear(SR_PORT, SR_PIN);
+  int i = 0;
   GPIO_PinOutSet(SR_PORT, SR_PIN);
+  for (i = 0; i < 100000; i++){}
+   GPIO_PinOutClear(SR_PORT, SR_PIN);
 
 
   //Infinite loop
   while(1){
-	//Read ADC Interrupt
+	  packet_handler();
 	 if(readFlag == 1){
 		 	mux_select(1);
 			adc_configure_channels();
@@ -351,7 +357,6 @@ int main(void){
 			NVIC_EnableIRQ(LETIMER0_IRQn);
 	 }
 
-	//packet_handler();
 
 	//If connected to an Android device, pause data collection
 	if(android_connection)
@@ -378,11 +383,14 @@ int main(void){
 	 		 break;
 	 }
 
-	//sendData(&column_test);
-
+//	 packet_handler();
+//	 if(ble_soft_timer_Flag){
+		 sendData(data_ptr);
+//		 ble_soft_timer_Flag = 0;
+//	 }
 
 	 //Go to sleep
-	 //EMU_EnterEM2(1);
+	// EMU_EnterEM2(1);
 
   }
  };
