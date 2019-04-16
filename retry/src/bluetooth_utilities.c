@@ -126,7 +126,6 @@ void packet_handler(){
 	  * Do not call any stack commands before receiving the boot event.
 	  * Here the system is set to start advertising immediately after boot procedure. */
 	 case gecko_evt_system_boot_id:
-
 		 /* Set advertising parameters. 100ms advertisement interval.
 		  * The first parameter is advertising set handle
 		  * The next two parameters are minimum and maximum advertising interval, both in
@@ -138,14 +137,19 @@ void packet_handler(){
 		 gecko_cmd_le_gap_start_advertising(0, le_gap_general_discoverable, le_gap_connectable_scannable);
 		 break;
 
+	//Turn on the BLE light on a connection
+	 case gecko_evt_le_connection_opened_id:
+		GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
+		break;
+
 	 case gecko_evt_gatt_server_characteristic_status_id:
-		 android_connection = 1;
 		 if((evt->data.evt_gatt_server_characteristic_status.characteristic == gattdb_Data)
 				 && (evt->data.evt_gatt_server_characteristic_status.status_flags == 0x01))
 		 {
 
 			 if (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x02)
 			 {
+
 				 /* Indications have been turned ON - start the repeating timer. The 1st parameter '32768'
 				  * tells the timer to run for 1 second (32.768 kHz oscillator), the 2nd parameter is
 				  * the timer handle and the 3rd parameter '0' tells the timer to repeat continuously until
@@ -162,6 +166,7 @@ void packet_handler(){
 				// printf("\n soft timer STOPED\n");
 			 }
 		   }
+
 		   break;
 //
 //		case gecko_evt_hardware_soft_timer_id:
@@ -182,22 +187,21 @@ void packet_handler(){
 			    	operation_mode = MODE_FIELD;
 			    	record_time = RECORD_ONE_MINUTE;
 			    }
+			   }
 			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_offload)
 			    {
-			    struct offload_t* offload_bit = (struct offload_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
-
-			    offload_flag = offload_bit->offload;
+				 user_flag = USER_FLAG_OFFLOAD;
 			    }
 			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_ClearMem)
-			    {
-			    struct clear_t* clear_bit = (struct clear_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
-
-			    clear_flag = clear_bit->clear;
-			    }
+			 {
+				 user_flag = USER_FLAG_CLEAR;
+				 //GPIO_PinOutClear(LED_BLE_PORT, LED_BLE_PIN);
+			 }
 			  break;
 
 
 		case gecko_evt_le_connection_closed_id:
+			GPIO_PinOutClear(LED_BLE_PORT, LED_BLE_PIN);
 			/* Check if need to boot to dfu mode */
 			if (boot_to_dfu) {
 				/* Enter to DFU OTA mode */

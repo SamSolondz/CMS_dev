@@ -50,6 +50,10 @@
 #define MODE_FIELD	0
 #define MODE_DEMO	1
 
+#define USER_FLAG_NOP		0
+#define USER_FLAG_CLEAR 	1
+#define USER_FLAG_OFFLOAD	2
+
 #ifndef MAX_CONNECTIONS
 #define MAX_CONNECTIONS 4
 #endif
@@ -62,6 +66,7 @@ int ble_soft_timer_Flag = 0;
 bool operation_mode = MODE_FIELD;						//Default to field mode
 bool offload_flag = 0;
 bool clear_flag = 0;
+int user_flag = USER_FLAG_NOP;
 int record_time = RECORD_FIVE_SECOND;
 
 uint16_t current_page = 0;
@@ -349,9 +354,29 @@ int main(void){
 			 }
 	 }
 
+	 switch(user_flag){
+	 	 case USER_FLAG_CLEAR:
+	 		NVIC_DisableIRQ(LETIMER0_IRQn);
+	 		//void CLEAR_DATA();
+	 		printf("\n\rClear selected");
+	 		user_flag = USER_FLAG_NOP;
+	 		NVIC_EnableIRQ(LETIMER0_IRQn);
+	 		//GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
+	 		break;
+	 	 case USER_FLAG_OFFLOAD:
+		 	NVIC_DisableIRQ(LETIMER0_IRQn);
+		 	//void OFFLOAD_DATA();
+		 	printf("\n\rOffload selected");
+		 	user_flag = USER_FLAG_NOP;
+		 	NVIC_EnableIRQ(LETIMER0_IRQn);
+		 	break;
+	 	 default:
+	 		 break;
+	 }
+
 //	 packet_handler();
 //	 if(ble_soft_timer_Flag){
-		 sendData(data_ptr);
+		 //sendData(data_ptr);
 //		 ble_soft_timer_Flag = 0;
 //	 }
 

@@ -72,7 +72,8 @@ src/bluetooth_utilities.o: ../src/bluetooth_utilities.c \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\halconfig/bsphalconfig.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp_bcp.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_letimer.h \
- ../src/adc_functions.h ../src/adc_defines.h ../src/spi_functions.h \
+ ../src/pin_def.h ../src/adc_functions.h ../src/adc_defines.h \
+ ../src/spi_functions.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h
 
 ../src/bluetooth_utilities.h:
@@ -220,6 +221,8 @@ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\hal
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp_bcp.h:
 
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_letimer.h:
+
+../src/pin_def.h:
 
 ../src/adc_functions.h:
 
