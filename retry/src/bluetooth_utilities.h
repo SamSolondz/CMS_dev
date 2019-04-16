@@ -30,6 +30,12 @@
 
 #include "adc_functions.h"
 
+#define MODE_FIELD	0
+#define MODE_DEMO	1
+#define RECORD_ONE_MINUTE		1966080
+#define RECORD_FIVE_SECOND		5 * 32768
+
+
 extern ble_soft_timer_Flag;
 extern record_time;
 extern bool operation_mode;

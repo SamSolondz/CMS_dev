@@ -139,6 +139,7 @@ void packet_handler(){
 		 break;
 
 	 case gecko_evt_gatt_server_characteristic_status_id:
+		 android_connection = 1;
 		 if((evt->data.evt_gatt_server_characteristic_status.characteristic == gattdb_Data)
 				 && (evt->data.evt_gatt_server_characteristic_status.status_flags == 0x01))
 		 {
@@ -173,7 +174,13 @@ void packet_handler(){
 			    {
 			    struct mode_t* mode_bit = (struct mode_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
 
-			    operation_mode = mode_bit->data_in;
+			    if(operation_mode == MODE_FIELD){
+			    	operation_mode = MODE_DEMO;
+			    	record_time = RECORD_FIVE_SECOND;
+			    }
+			    else{
+			    	operation_mode = MODE_FIELD;
+			    	record_time = RECORD_ONE_MINUTE;
 			    }
 			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_offload)
 			    {

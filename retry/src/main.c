@@ -45,8 +45,7 @@
 #define ONE_SECOND_TIMER_COUNT                      13672
 #define RECORD_ONE_MINUTE							1966080
 #define RECORD_FIVE_SECOND							5 * 32768
-#define PULSE_HIGH								5 * 32768
-
+#define PULSE_HIGH									5 * 32768
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
@@ -65,18 +64,9 @@ bool offload_flag = 0;
 bool clear_flag = 0;
 int record_time = RECORD_FIVE_SECOND;
 
-int pulseFlag = 0;
-uint32_t pulse_counter = 0;
-int pulse_topval = 0;
-bool set_reset = false;
-
 uint16_t current_page = 0;
 uint16_t current_column = 0;
 uint32_t measurementCount = 1;
-
-bool android_connection = false;
-
-
 
 
 uint8_t bluetooth_stack_heap[DEFAULT_BLUETOOTH_HEAP(MAX_CONNECTIONS)];
@@ -171,8 +161,12 @@ void mux_select(int select){
 	}
 }
 
-void SR_toggle(){
-
+void SR_toggle()
+{
+	  int i = 0;
+	  GPIO_PinOutSet(SR_PORT, SR_PIN);
+	  for (i = 0; i < 100000; i++){}
+	  GPIO_PinOutClear(SR_PORT, SR_PIN);
 }
 
 
@@ -186,16 +180,6 @@ void LETIMER0_IRQHandler(void) {
 			ms_counter = 0;
 			NVIC_DisableIRQ(LETIMER0_IRQn);
 		}
-//		if(set_reset == true){
-//			if(pulse_counter < pulse_topval)
-//				pulse_counter++;
-//			else{
-//				GPIO_PinOutSet(SR_PORT, SR_PIN);
-//				pulse_counter = 0;
-//				set_reset = false;
-//			}
-//		}
-
 }
 
 void OFFLOAD_DATA(){
@@ -238,8 +222,7 @@ int main(void){
 	gecko_init(&config);
 	RETARGET_SerialInit();
 	usart_setup();	//CMU_clock_enable happens here, must occur before gpio/letimersetup
-	packet_handler();
-	//	printf("\n\rHello World!\r\n");
+	//printf("\n\rHello World!\r\n");
 
 	//Set GPIO pins//
 	GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
@@ -298,10 +281,6 @@ int main(void){
 	flash_test.temp = 0x0;
 #endif
 
-
-	LETIMER_setup();
-	NVIC_EnableIRQ(LETIMER0_IRQn);
-
   /*Initialize Structure to hold recorded data*/
   recorded_data new_data;
   recorded_data *data_ptr;
@@ -313,15 +292,13 @@ int main(void){
   new_data.measureNum = 0;
 
   //Trigger a SR
-  set_reset = false;
-  int i = 0;
-  GPIO_PinOutSet(SR_PORT, SR_PIN);
-  for (i = 0; i < 100000; i++){}
-   GPIO_PinOutClear(SR_PORT, SR_PIN);
+  SR_toggle();
 
+  LETIMER_setup();
+  NVIC_EnableIRQ(LETIMER0_IRQn);
 
   //Infinite loop
-  while(1){
+   while(1){
 	  packet_handler();
 	 if(readFlag == 1){
 		 	mux_select(1);
@@ -355,32 +332,21 @@ int main(void){
 
 			readFlag = 0;
 			NVIC_EnableIRQ(LETIMER0_IRQn);
-	 }
 
-
-	//If connected to an Android device, pause data collection
-	if(android_connection)
-	{
-		NVIC_DisableIRQ(LETIMER0_IRQn);
-		ms_counter = 0;
-	}
-	//TODO: Re-enable IRQ in appropriate place
-
-	 switch(operation_mode){
-	 	 case MODE_FIELD:			//store data
-	 		 record_time = RECORD_ONE_MINUTE;//can be moved to user-input handler
-	 		 flash_write_data32(data_ptr->measureNum, &current_column, &current_page);
-	 		 flash_write_data32(data_ptr->xaxis, &current_column, &current_page);
-	 		 flash_write_data32(data_ptr->yaxis, &current_column, &current_page);
-	 		 flash_write_data32(data_ptr->zaxis, &current_column, &current_page);
-	 		 flash_write_data32(data_ptr->temp, &current_column, &current_page);
-	 		 break;
-	 	 case MODE_DEMO:			//send data and forget it
-	 		 NVIC_DisableIRQ(LETIMER0_IRQn);
-	 		 record_time = RECORD_FIVE_SECOND; //can be moved to user-input handler
-	 		 //sendData(data_ptr);
-	 		 NVIC_EnableIRQ(LETIMER0_IRQn);
-	 		 break;
+			 switch(operation_mode){
+				 case MODE_FIELD:			//store data
+					 flash_write_data32(data_ptr->measureNum, &current_column, &current_page);
+					 flash_write_data32(data_ptr->xaxis, &current_column, &current_page);
+					 flash_write_data32(data_ptr->yaxis, &current_column, &current_page);
+					 flash_write_data32(data_ptr->zaxis, &current_column, &current_page);
+					 flash_write_data32(data_ptr->temp, &current_column, &current_page);
+					 break;
+				 case MODE_DEMO:			//send data and forget it
+					 NVIC_DisableIRQ(LETIMER0_IRQn);
+					 //sendData(data_ptr);
+					 NVIC_EnableIRQ(LETIMER0_IRQn);
+					 break;
+			 }
 	 }
 
 //	 packet_handler();
