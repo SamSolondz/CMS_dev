@@ -44,8 +44,8 @@
 #define ONE_MILLISECOND_BASE_VALUE_COUNT            1000
 #define ONE_SECOND_TIMER_COUNT                      13672
 #define RECORD_ONE_MINUTE							1966080
-#define RECORD_FIVE_SECOND							5 * 32768
-#define PULSE_HIGH									5 * 32768
+#define RECORD_FIVE_SECOND							(5 * 32768)
+#define PULSE_HIGH									(5 * 32768)
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
@@ -58,14 +58,13 @@
 #define MAX_CONNECTIONS 4
 #endif
 
+#define CMS 1
 
 uint32_t ms_counter = 0;
 int readFlag = 0;
 
 int ble_soft_timer_Flag = 0;
-bool operation_mode = MODE_FIELD;						//Default to field mode
-bool offload_flag = 0;
-bool clear_flag = 0;
+int operation_mode = MODE_FIELD;						//Default to field mode
 int user_flag = USER_FLAG_NOP;
 int record_time = RECORD_FIVE_SECOND;
 
@@ -190,12 +189,42 @@ void LETIMER0_IRQHandler(void) {
 void OFFLOAD_DATA(){
 	NVIC_DisableIRQ(LETIMER0_IRQn);
 	ms_counter = 0;
-	uint32_t page_read = FLASH_DATA_PAGE_START;
-	uint32_t column_read = 0x0;
+	uint32_t read_page = FLASH_DATA_PAGE_START;
+	uint32_t read_column = 0x0000;
 
-	uint32_t data_read = flash_read_data(page_read, column_read);
+	while(read_page <= current_page)
+	{
+		recorded_data offload;
+		uint32_t data_read[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
+
+		//Read 5 data points
+		for(int i = 0; i < 4; i++)
+		{
+			data_read[i] = flash_read_data(read_page, read_column);
+
+			if(read_column == FLASH_FINAL_COLUMN_ADDR)
+			{
+				read_column = 0;
+				read_page++;
+			}
+			else
+				read_column++;
+		}
+
+		offload.xaxis = data_read[0];
+		offload.yaxis = data_read[1];
+		offload.zaxis = data_read[2];
+		offload.temp = data_read[3];
+		offload.measureNum = data_read[4];
+
+		sendData(&offload);
+
+		if(read_page == current_page && read_column > current_column)
+			break;	//Forces while loop to break
+	}
+
 	NVIC_EnableIRQ(LETIMER0_IRQn);
-};
+}
 
 void CLEAR_DATA() {
 	NVIC_DisableIRQ(LETIMER0_IRQn);
@@ -242,7 +271,11 @@ int main(void){
 	//adc_verify_communication();
 	//flash_verify_communication();
 
-	operation_mode = flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_MODE);
+
+	operation_mode = MODE_DEMO;//flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_MODE);
+
+#ifdef CMS
+	//CLEAR_DATA();
 	if(operation_mode == MODE_FIELD)
 	{
 		//Set the column and page to last recorded
@@ -252,38 +285,12 @@ int main(void){
 	else
 	{
 		//Restart column and page to zero (reset)
+		record_time = RECORD_FIVE_SECOND;
 		current_column = 0x0;
 		current_page = FLASH_DATA_PAGE_START;
 		flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
 		flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
 	}
-
-#ifdef COLUMN_TEST
-	for(int i = 0; i < 700; i++)
-	{
-		flash_write_data32(0xABCD, &current_column, &current_page);
-		column_test.xaxis = current_column;
-		if(current_column == FLASH_FINAL_PAGE_ADDR){
-			column_test.xaxis = current_column;
-			GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
-			break;
-			//while(1){sendData(&column_test);}
-		}
-
-	}
-	GPIO_PinOutClear(LED_POWER_PORT, LED_POWER_PIN);
-#endif
-
-#ifdef FLASH_READ_TEST
-	uint32_t flash_read = (data_read[0] + (data_read[1]<<8)
-						+(data_read[2]<<16) + (data_read[3] << 24));
-
-
-	recorded_data flash_test;
-	flash_test.xaxis = flash_read;
-	flash_test.yaxis = 0xAAABBB;
-	flash_test.zaxis = 0x0;
-	flash_test.temp = 0x0;
 #endif
 
   /*Initialize Structure to hold recorded data*/
@@ -340,15 +347,23 @@ int main(void){
 
 			 switch(operation_mode){
 				 case MODE_FIELD:			//store data
+					 NVIC_DisableIRQ(LETIMER0_IRQn);
+					 GPIO_PinOutToggle(LED_POWER_PORT, LED_POWER_PIN);
+#ifdef CMS
 					 flash_write_data32(data_ptr->measureNum, &current_column, &current_page);
 					 flash_write_data32(data_ptr->xaxis, &current_column, &current_page);
 					 flash_write_data32(data_ptr->yaxis, &current_column, &current_page);
 					 flash_write_data32(data_ptr->zaxis, &current_column, &current_page);
 					 flash_write_data32(data_ptr->temp, &current_column, &current_page);
+#endif
+					 sendData(data_ptr);
+					 NVIC_EnableIRQ(LETIMER0_IRQn);
+
 					 break;
 				 case MODE_DEMO:			//send data and forget it
 					 NVIC_DisableIRQ(LETIMER0_IRQn);
-					 //sendData(data_ptr);
+					 GPIO_PinOutToggle(LED_BLE_PORT, LED_BLE_PIN);
+					 sendData(data_ptr);
 					 NVIC_EnableIRQ(LETIMER0_IRQn);
 					 break;
 			 }
@@ -357,7 +372,7 @@ int main(void){
 	 switch(user_flag){
 	 	 case USER_FLAG_CLEAR:
 	 		NVIC_DisableIRQ(LETIMER0_IRQn);
-	 		//void CLEAR_DATA();
+	 		//CLEAR_DATA();
 	 		printf("\n\rClear selected");
 	 		user_flag = USER_FLAG_NOP;
 	 		NVIC_EnableIRQ(LETIMER0_IRQn);
@@ -365,7 +380,7 @@ int main(void){
 	 		break;
 	 	 case USER_FLAG_OFFLOAD:
 		 	NVIC_DisableIRQ(LETIMER0_IRQn);
-		 	//void OFFLOAD_DATA();
+		 	//OFFLOAD_DATA();
 		 	printf("\n\rOffload selected");
 		 	user_flag = USER_FLAG_NOP;
 		 	NVIC_EnableIRQ(LETIMER0_IRQn);
@@ -374,14 +389,8 @@ int main(void){
 	 		 break;
 	 }
 
-//	 packet_handler();
-//	 if(ble_soft_timer_Flag){
-		 //sendData(data_ptr);
-//		 ble_soft_timer_Flag = 0;
-//	 }
-
 	 //Go to sleep
-	// EMU_EnterEM2(1);
+	 //EMU_EnterEM2(1);
 
   }
  };

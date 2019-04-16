@@ -92,11 +92,14 @@ void sendData(recorded_data * data_ptr)
 	uint32_t yread = data_ptr->yaxis;
 	uint32_t zread = data_ptr->zaxis;
 	uint32_t temp  = data_ptr->temp;
+	uint32_t measureNum = data_ptr->measureNum;
 
 	uint8_t flag = 0xff;
-	uint8_t tempBuffer[8];//should be 40
+	uint8_t tempBuffer[40];//should be 40
 	uint8_t *p = tempBuffer;
 
+	UINT32_TO_BITSTREAM(p, measureNum);
+	UINT8_TO_BITSTREAM(p, flag);
 
 	UINT32_TO_BITSTREAM(p, xread);
 	UINT8_TO_BITSTREAM(p, flag);
@@ -110,8 +113,10 @@ void sendData(recorded_data * data_ptr)
 	UINT32_TO_BITSTREAM(p, temp);
 	UINT8_TO_BITSTREAM(p, flag);
 
+
+
 	 gecko_cmd_gatt_server_send_characteristic_notification(
-	      0xFF, gattdb_Data, 8 , tempBuffer);
+	      0xFF, gattdb_Data, 40 , tempBuffer);
 }
 
 void packet_handler(){

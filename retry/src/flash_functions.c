@@ -241,7 +241,7 @@ void flash_write_data32(uint32_t data, uint16_t * column_address, uint16_t * pag
 	flash_write_disable();
 
 	//When we hit the last column address of the page, reset column and increment page
-	if(*column_address == FLASH_FINAL_PAGE_ADDR){
+	if(*column_address == FLASH_FINAL_COLUMN_ADDR){
 		*page_address = *page_address + 1;
 		*column_address = 0;
 
