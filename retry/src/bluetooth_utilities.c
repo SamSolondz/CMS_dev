@@ -123,7 +123,8 @@ void packet_handler(){
 	 struct gecko_cmd_packet* evt;
 
 	 /* Check for stack event. */
-	 evt = gecko_wait_event();
+	 //Changed to gecko_peek_event
+	 evt = gecko_peek_event();
 
 	 /* Handle events */
 	 switch (BGLIB_MSG_ID(evt->header)) {
@@ -137,6 +138,7 @@ void packet_handler(){
 		  * units of (milliseconds * 1.6).
 		  * The last two parameters are duration and maxevents left as default. */
 		 gecko_cmd_le_gap_set_advertise_timing(0, 160, 160, 0, 0);
+
 
 		 /* Start general advertising and enable connections. */
 		 gecko_cmd_le_gap_start_advertising(0, le_gap_general_discoverable, le_gap_connectable_scannable);

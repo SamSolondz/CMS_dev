@@ -33,8 +33,8 @@
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
-#define RECORD_ONE_MINUTE		1966080
-#define RECORD_FIVE_SECOND		(5 * 32768)
+#define RECORD_ONE_MINUTE							1966080
+#define RECORD_FIVE_SECOND							32768//(5 * 32768)
 
 #define USER_FLAG_NOP		0
 #define USER_FLAG_CLEAR 	1

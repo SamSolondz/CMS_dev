@@ -44,7 +44,7 @@
 #define ONE_MILLISECOND_BASE_VALUE_COUNT            1000
 #define ONE_SECOND_TIMER_COUNT                      13672
 #define RECORD_ONE_MINUTE							1966080
-#define RECORD_FIVE_SECOND							(5 * 32768)
+#define RECORD_FIVE_SECOND							32768//(5 * 32768)
 #define PULSE_HIGH									(5 * 32768)
 
 #define MODE_FIELD	0
@@ -58,7 +58,7 @@
 #define MAX_CONNECTIONS 4
 #endif
 
-#define CMS 1
+//#define CMS 1
 
 uint32_t ms_counter = 0;
 int readFlag = 0;
@@ -66,7 +66,8 @@ int readFlag = 0;
 int ble_soft_timer_Flag = 0;
 int operation_mode = MODE_FIELD;						//Default to field mode
 int user_flag = USER_FLAG_NOP;
-int record_time = RECORD_FIVE_SECOND;
+int record_time = RECORD_ONE_MINUTE;
+
 
 uint16_t current_page = 0;
 uint16_t current_column = 0;
@@ -273,11 +274,11 @@ int main(void){
 
 
 	operation_mode = MODE_DEMO;//flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_MODE);
+	CLEAR_DATA();
 
-#ifdef CMS
-	//CLEAR_DATA();
 	if(operation_mode == MODE_FIELD)
 	{
+		record_time = RECORD_ONE_MINUTE;
 		//Set the column and page to last recorded
 		current_column = flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_COLUMN);
 		current_page = flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_PAGE);
@@ -291,7 +292,7 @@ int main(void){
 		flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
 		flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
 	}
-#endif
+#
 
   /*Initialize Structure to hold recorded data*/
   recorded_data new_data;
@@ -347,8 +348,8 @@ int main(void){
 
 			 switch(operation_mode){
 				 case MODE_FIELD:			//store data
-					 NVIC_DisableIRQ(LETIMER0_IRQn);
-					 GPIO_PinOutToggle(LED_POWER_PORT, LED_POWER_PIN);
+					printf("\r\nFIELD");
+					 //GPIO_PinOutToggle(LED_POWER_PORT, LED_POWER_PIN);
 #ifdef CMS
 					 flash_write_data32(data_ptr->measureNum, &current_column, &current_page);
 					 flash_write_data32(data_ptr->xaxis, &current_column, &current_page);
@@ -356,13 +357,12 @@ int main(void){
 					 flash_write_data32(data_ptr->zaxis, &current_column, &current_page);
 					 flash_write_data32(data_ptr->temp, &current_column, &current_page);
 #endif
-					 sendData(data_ptr);
-					 NVIC_EnableIRQ(LETIMER0_IRQn);
-
+					 //sendData(data_ptr);
 					 break;
 				 case MODE_DEMO:			//send data and forget it
+					 printf("\r\nDEMO");
 					 NVIC_DisableIRQ(LETIMER0_IRQn);
-					 GPIO_PinOutToggle(LED_BLE_PORT, LED_BLE_PIN);
+					 //GPIO_PinOutToggle(LED_BLE_PORT, LED_BLE_PIN);
 					 sendData(data_ptr);
 					 NVIC_EnableIRQ(LETIMER0_IRQn);
 					 break;
