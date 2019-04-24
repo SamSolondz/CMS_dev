@@ -8,7 +8,7 @@
     <!--Device Name-->
     <characteristic id="device_name" name="Device Name" sourceId="org.bluetooth.characteristic.gap.device_name" uuid="2A00">
       <informativeText/>
-      <value length="4" type="utf-8" variable_length="false">SNOW</value>
+      <value length="5" type="utf-8" variable_length="false">SLEET</value>
       <properties read="true" read_requirement="optional" write="true" write_requirement="optional"/>
     </characteristic>
     
@@ -51,7 +51,7 @@
     </characteristic>
     
     <!--Offload-->
-    <characteristic id="offload" name="Offload" sourceId="custom.type" uuid="32ab1e71-5d16-4d3e-baa5-e5919c139ce0">
+    <characteristic id="offload" name="Offload" sourceId="custom.type" uuid="5360a266-325c-409a-b5af-e03cd5f6f7ab">
       <informativeText>Custom characteristic</informativeText>
       <value length="4" type="utf-8" variable_length="true">0x00</value>
       <properties write="true" write_requirement="optional"/>
@@ -61,6 +61,13 @@
     <characteristic id="ClearMem" name="ClearMem" sourceId="custom.type" uuid="32ab1e71-5d16-4d3e-baa5-e5919c139ce0">
       <informativeText>Custom characteristic</informativeText>
       <value length="4" type="utf-8" variable_length="true">0x00</value>
+      <properties write="true" write_requirement="optional"/>
+    </characteristic>
+    
+    <!--Recording-->
+    <characteristic id="Recording" name="Recording" sourceId="custom.type" uuid="68f80007-02fc-4fec-b2f4-1bfaeea4a568">
+      <informativeText>Custom characteristic</informativeText>
+      <value length="4" type="hex" variable_length="false">0x00</value>
       <properties write="true" write_requirement="optional"/>
     </characteristic>
   </service>

@@ -135,6 +135,7 @@ void flash_block_erase(uint16_t page_address){
 	uint8_t RxBuffer[4] = {0x00, 0x00, 0x00, 0x00};
 	spi_write_uint8(4, TxBuffer, RxBuffer, flash);
 	while(flash_read_status_register(3) & FLASH_BUSY_BIT){}
+
 }
 
 /*Load program data into the Data buffer for writing data*/
@@ -233,33 +234,35 @@ void flash_read_excute_BUF1(uint16_t column_address, int byte_count, uint8_t *da
 
 
 //Writes 32 bits and updates column address
-void flash_write_data32(uint32_t data, uint16_t * column_address, uint16_t * page_address){
+void flash_write_data32(recorded_data * data_struct, uint16_t * column_address, uint16_t * page_address){
+	flash_write_status_register(1, 0x00);	//Disable all write protection
 	flash_write_enable();
-	flash_load_program_data_32(*column_address, data);
+
+	flash_block_erase(*page_address);	//Erase the page
+	while(flash_read_status_register(3) & FLASH_BUSY_BIT){}	//Wait until erase operation has finished
+
+
+
+	flash_load_program_data_32(0x0000, data_struct->xaxis);
+	flash_load_program_data_32(0x0004, data_struct->yaxis);
+	flash_load_program_data_32(0x0008, data_struct->zaxis);
+	flash_load_program_data_32(0x0012, data_struct->temp);
+	flash_load_program_data_32(0x0016, data_struct->measureNum);
+
 	flash_program_execute(*page_address);
 	while(flash_read_status_register(3) & FLASH_BUSY_BIT){}
+
 	flash_write_disable();
 
-	//When we hit the last column address of the page, reset column and increment page
-	if(*column_address == FLASH_FINAL_COLUMN_ADDR){
-		*page_address = *page_address + 1;
-		*column_address = 0;
-
-		//Update page and column in FLASH
-		flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
-		flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
-	}
-	else
-	{
-		*column_address  = *column_address + 4;
-		//Update column in FLASH
-		flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
-	}
+	//Update the current page
+	//current_page  = current_page + 4;
 }
 
 //Writes 32 bits no updating
 void flash_write_data32_direct(uint32_t data, uint16_t column_address, uint16_t page_address){
+	flash_write_status_register(1, 0x00);	//Disable all write protection
 	flash_write_enable();
+	flash_block_erase(page_address);//Erase the first page
 	flash_load_program_data_32(column_address, data);
 	flash_program_execute(page_address);
 	while(flash_read_status_register(3) & FLASH_BUSY_BIT){}
@@ -267,19 +270,15 @@ void flash_write_data32_direct(uint32_t data, uint16_t column_address, uint16_t 
 }
 
 
-void flash_write_data_TEST(){
-
+void flash_write_data_TEST(uint32_t data){
 	flash_write_status_register(1, 0x00);	//Disable all write protection
 	flash_write_enable();
 	flash_block_erase(0x0000);	//Erase the first page
 	while(flash_read_status_register(3) & FLASH_BUSY_BIT){}	//Wait until erase operation has finished
 
-	//Load some test values into the data buffer
-//	flash_load_program_data_8(0x000, 0xDE);
-//	flash_load_program_data_8(0x001, 0xAA);
-//	flash_load_program_data_8(0x002, 0xAA);
-//	flash_load_program_data_8(0x003, 0xEF);
-	flash_load_program_data_32(0x0000, 0xDEADBEEF);
+	flash_load_program_data_32(0x0000, 0xdeadbeef);
+	flash_load_program_data_32(0x0004, data);
+
 
 	flash_program_execute(0x0000);
 	while(flash_read_status_register(3) & FLASH_BUSY_BIT){}	//Wait until erase operation has finished
@@ -293,29 +292,34 @@ void flash_read_data_TEST(uint8_t *data_read){
 	while(flash_read_status_register(3) & FLASH_BUSY_BIT){}	//Wait until operation has finished
 	flash_read_excute_BUF1(0x0000, 4, data_read); 	//Read the 4 bytes of 0xDEADBEEF
 
-//	if(data_read[0] == 0xDE && data_read[1] == 0xAD && data_read[2] == 0xBE && data_read[3] == 0xEF)
-//	{
-//		//GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
-//	}
+	if(data_read[0] == 0xDE && data_read[1] == 0xAD && data_read[2] == 0xBE && data_read[3] == 0xEF)
+	{
+		GPIO_PinOutClear(LED_BLE_PORT, LED_BLE_PIN);
+	}
 
 };
 
-void flash_read_32(uint32_t page_address, uint32_t column_address, uint8_t *data_read)
+void flash_read_32(uint16_t page_address, uint16_t column_address, uint8_t *data_read)
 {
 	flash_write_enable();
 	flash_load_read_data(page_address); //Load the page into the data buffer
 	while(flash_read_status_register(3) & FLASH_BUSY_BIT){}	//Wait until operation has finished
-	flash_read_excute_BUF1(0x0000, 4, data_read); 	//Read the 4 bytes of 0xDEADBEEF
+	flash_read_excute_BUF1(column_address, 4, data_read); 	//Read the 4 bytes of 0xDEADBEEF
+
 }
 
 
-uint32_t flash_read_data(uint32_t page_address, uint32_t column_address)
+uint32_t flash_read_data(uint16_t page_address, uint16_t column_address)
 {
 	uint8_t data_read[4];
 	flash_read_32(page_address, column_address, data_read);
-	uint32_t read = (data_read[0] + (data_read[1]<<8)
-						+(data_read[2]<<16) + (data_read[3] << 24));
-	return read;
+
+	uint32_t return_read = (((uint32_t)data_read[0] << 24)
+							+ ((uint32_t)data_read[1]<<16)
+							+((uint32_t)data_read[2]<<8)
+							+ ((uint32_t)data_read[3])
+							);
+	return return_read;
 }
 
 

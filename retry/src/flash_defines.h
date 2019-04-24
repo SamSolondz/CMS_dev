@@ -49,7 +49,11 @@
 //Columns in param page
 #define FLASH_LAST_COLUMN		0x00
 #define	FLASH_LAST_PAGE			0x04
-#define FLASH_START_TIME		0x08
 #define FLASH_LAST_MODE			0x0C
+#define FLASH_START_TIME		0x10
+
+#define TEST1					0x14
+#define TEST2					0x18
+#define TEST3					0x1C
 
 #endif /* INC_FLASH_DEFINES_H_ */

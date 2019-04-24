@@ -1,12 +1,4 @@
-src/bluetooth_utilities.o: ../src/bluetooth_utilities.c \
- ../src/bluetooth_utilities.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_types.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\soc/native_gecko.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/board_features.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\BGM11_BRD4300A\config/hal-config-board.h \
+src/ustimer.o: ../src/ustimer.c \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/em_device.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/bgm111a256v2.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\CMSIS\Include/core_cm4.h \
@@ -51,47 +43,16 @@ src/bluetooth_utilities.o: ../src/bluetooth_utilities.c \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/bgm1_dmareq.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/bgm1_af_ports.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/bgm1_af_pins.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\halconfig\inc\hal-config/hal-config-types.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_gpio.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_bus.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_assert.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\module\config/sl_module.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\module\config/sl_module_bgm111a256v2.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_common.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_cmu.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_assert.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_bus.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_gpio.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_emu.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config-app-common.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/gecko_configuration.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_gattdb_def.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_types.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_errorcodes.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/gatt_db.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_gattdb_def.h \
- ../src/infrastructure.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_system.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\halconfig/bsphalconfig.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp_bcp.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_letimer.h \
- ../src/pin_def.h ../src/adc_functions.h ../src/adc_defines.h \
- ../src/spi_functions.h \
- C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h \
- ../src/flash_defines.h ../src/flash_functions.h
-
-../src/bluetooth_utilities.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_types.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\soc/native_gecko.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/board_features.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/ble-configuration.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\BGM11_BRD4300A\config/hal-config-board.h:
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_core.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_common.h \
+ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_timer.h \
+ ../src/ustimer.h ../src/ecode.h ../src/ustimer_config.h
 
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/em_device.h:
 
@@ -181,58 +142,26 @@ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\Silicon
 
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\Device\SiliconLabs\BGM1\Include/bgm1_af_pins.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\halconfig\inc\hal-config/hal-config-types.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_common.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_gpio.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_bus.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_cmu.h:
 
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_assert.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\module\config/sl_module.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\module\config/sl_module_bgm111a256v2.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_cmu.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_bus.h:
 
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_gpio.h:
 
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_emu.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/hal-config-app-common.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_core.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/gecko_configuration.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_common.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_gattdb_def.h:
+C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_timer.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_types.h:
+../src/ustimer.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_errorcodes.h:
+../src/ecode.h:
 
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/gatt_db.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\protocol\bluetooth\ble_stack\inc\common/bg_gattdb_def.h:
-
-../src/infrastructure.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_system.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\halconfig/bsphalconfig.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\hardware\kit\common\bsp/bsp_bcp.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_letimer.h:
-
-../src/pin_def.h:
-
-../src/adc_functions.h:
-
-../src/adc_defines.h:
-
-../src/spi_functions.h:
-
-C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h:
-
-../src/flash_defines.h:
-
-../src/flash_functions.h:
+../src/ustimer_config.h:

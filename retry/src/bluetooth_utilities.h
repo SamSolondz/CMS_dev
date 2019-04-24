@@ -30,11 +30,13 @@
 #include "pin_def.h"
 
 #include "adc_functions.h"
+#include "flash_defines.h"
+#include "flash_functions.h"
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
-#define RECORD_ONE_MINUTE							1966080
-#define RECORD_FIVE_SECOND							32768//(5 * 32768)
+#define RECORD_FIELD_TIME							(60 * 32768)//1966080
+#define RECORD_DEMO_TIME							(1 * 32768)
 
 #define USER_FLAG_NOP		0
 #define USER_FLAG_CLEAR 	1
@@ -44,6 +46,9 @@ extern ble_soft_timer_Flag;
 extern record_time;
 extern int operation_mode;
 extern int user_flag;
+extern int running_flag;
+extern uint32_t time_start;
+
 
 //extern operation_mode;
 

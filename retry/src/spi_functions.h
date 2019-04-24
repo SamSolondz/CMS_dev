@@ -19,6 +19,7 @@ typedef struct {
 	uint32_t zaxis;
 	uint32_t temp;
 	uint32_t measureNum; 	//Will be used to timestamp data on Android app.
+	uint32_t count;
 }recorded_data;
 
 

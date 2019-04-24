@@ -83,7 +83,8 @@ src/main.o: ../src/main.c \
  ../src/spi_functions.h \
  C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_usart.h \
  ../src/adc_functions.h ../src/flash_functions.h ../src/flash_defines.h \
- ../src/bluetooth_utilities.h ../src/pin_def.h
+ ../src/bluetooth_utilities.h ../src/pin_def.h ../src/ustimer.h \
+ ../src/ustimer_config.h
 
 C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry/init_mcu.h:
 
@@ -266,3 +267,7 @@ C:\Users\Sam\SimplicityStudio\v4_workspace\SPI_dev\retry\platform\emlib\inc/em_u
 ../src/bluetooth_utilities.h:
 
 ../src/pin_def.h:
+
+../src/ustimer.h:
+
+../src/ustimer_config.h:

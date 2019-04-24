@@ -39,13 +39,14 @@
 #include "flash_functions.h"//
 #include "bluetooth_utilities.h"
 #include "pin_def.h"
+#include "ustimer.h"
 
 #define	DATABUFFER_SIZE  4
 #define ONE_MILLISECOND_BASE_VALUE_COUNT            1000
 #define ONE_SECOND_TIMER_COUNT                      13672
-#define RECORD_ONE_MINUTE							1966080
-#define RECORD_FIVE_SECOND							32768//(5 * 32768)
-#define PULSE_HIGH									(5 * 32768)
+#define RECORD_FIELD_TIME							(60 * 32768)//1966080
+#define RECORD_DEMO_TIME							(1 * 32768) // 32768 = 1 sec
+#define PULSE_HIGH									(3 * 32768)
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
@@ -54,11 +55,13 @@
 #define USER_FLAG_CLEAR 	1
 #define USER_FLAG_OFFLOAD	2
 
+#define AVERAGE_NUM			250
+
 #ifndef MAX_CONNECTIONS
 #define MAX_CONNECTIONS 4
 #endif
 
-//#define CMS 1
+#define CMS 1
 
 uint32_t ms_counter = 0;
 int readFlag = 0;
@@ -66,13 +69,18 @@ int readFlag = 0;
 int ble_soft_timer_Flag = 0;
 int operation_mode = MODE_FIELD;						//Default to field mode
 int user_flag = USER_FLAG_NOP;
-int record_time = RECORD_ONE_MINUTE;
+int record_time = RECORD_FIELD_TIME;
+int running_flag = 0;
 
-
-uint16_t current_page = 0;
+uint16_t current_page = 0x00;
 uint16_t current_column = 0;
 uint32_t measurementCount = 1;
 
+uint32_t time_start = 0;
+uint32_t b = 0x1;
+
+recorded_data holding[500];
+int holding_index = 0;
 
 uint8_t bluetooth_stack_heap[DEFAULT_BLUETOOTH_HEAP(MAX_CONNECTIONS)];
 // Gecko configuration parameters (see gecko_configuration.h)
@@ -188,65 +196,65 @@ void LETIMER0_IRQHandler(void) {
 }
 
 void OFFLOAD_DATA(){
-	NVIC_DisableIRQ(LETIMER0_IRQn);
-	ms_counter = 0;
-	uint32_t read_page = FLASH_DATA_PAGE_START;
-	uint32_t read_column = 0x0000;
 
-	while(read_page <= current_page)
-	{
-		recorded_data offload;
-		uint32_t data_read[5] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
+	recorded_data offload;
+	recorded_data * offload_ptr = &offload;
+	uint16_t read_page = FLASH_DATA_PAGE_START;
+	uint16_t read_column = 0x00;
 
-		//Read 5 data points
-		for(int i = 0; i < 4; i++)
-		{
-			data_read[i] = flash_read_data(read_page, read_column);
+	int j = 0;
+	while(j <= holding_index){
 
-			if(read_column == FLASH_FINAL_COLUMN_ADDR)
-			{
-				read_column = 0;
-				read_page++;
-			}
-			else
-				read_column++;
-		}
+//		offload.xaxis = flash_read_data(read_page, 0x00);
+//		offload.yaxis = flash_read_data(read_page, 0x04);
+//		offload.zaxis = flash_read_data(read_page, 0x08);
+//		offload.temp = flash_read_data(read_page, 0x12);
+//		offload.measureNum = flash_read_data(read_page, 0x016);
 
-		offload.xaxis = data_read[0];
-		offload.yaxis = data_read[1];
-		offload.zaxis = data_read[2];
-		offload.temp = data_read[3];
-		offload.measureNum = data_read[4];
+		offload = holding[j];
 
-		sendData(&offload);
+		USTIMER_Delay(300000);
+		GPIO_PinOutClear(LED_BLE_PORT, LED_BLE_PIN);
+		packet_handler();
+		sendData(offload_ptr);
+		USTIMER_Delay(300000);
+		GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
 
-		if(read_page == current_page && read_column > current_column)
-			break;	//Forces while loop to break
+		j++;
+		//read_page = read_page + (uint16_t)64;
 	}
-
-	NVIC_EnableIRQ(LETIMER0_IRQn);
 }
 
 void CLEAR_DATA() {
-	NVIC_DisableIRQ(LETIMER0_IRQn);
-	ms_counter = 0;
 
-	uint32_t erase_page = FLASH_DATA_PAGE_START;
 
-	while(erase_page <= current_page){
-		flash_block_erase(erase_page);
-		erase_page++;
-	}
-	//Reset current_page to start of data page
-	current_page = FLASH_DATA_PAGE_START;
-	current_column = 0x0;
+	recorded_data clear;
+	clear.measureNum = 0x00;
+	packet_handler();
+	sendData(&clear);
+
+	holding_index = 0;
+	measurementCount = 1;
+
+
+
+//	uint16_t erase_page = FLASH_DATA_PAGE_START;
+
+//	while(erase_page <= current_page){
+//		flash_block_erase(erase_page);
+//		erase_page = erase_page + (uint16_t)64;
+//	}
+//
+//	//Reset current_page to start of data page
+//	current_page = FLASH_DATA_PAGE_START;
+//	current_column = 0x0;
 
 	//Update page and column in FLASH
-	flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
-	flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
+	//flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
+	//flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
 
-	NVIC_EnableIRQ(LETIMER0_IRQn);
 };
+
 
 int main(void){
 	/* Chip errata */
@@ -257,7 +265,9 @@ int main(void){
 	gecko_init(&config);
 	RETARGET_SerialInit();
 	usart_setup();	//CMU_clock_enable happens here, must occur before gpio/letimersetup
-	//printf("\n\rHello World!\r\n");
+	USTIMER_Init();
+	printf("\n\rHello World!\r\n");
+
 
 	//Set GPIO pins//
 	GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
@@ -273,26 +283,28 @@ int main(void){
 	//flash_verify_communication();
 
 
-	operation_mode = MODE_DEMO;//flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_MODE);
+	operation_mode = MODE_FIELD;//flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_MODE);
 	CLEAR_DATA();
 
 	if(operation_mode == MODE_FIELD)
 	{
-		record_time = RECORD_ONE_MINUTE;
+		record_time = RECORD_FIELD_TIME;
 		//Set the column and page to last recorded
-		current_column = flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_COLUMN);
-		current_page = flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_PAGE);
+		//current_column = (uint16_t) flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_COLUMN);
+		//current_page = (uint16_t) flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_PAGE);
+		current_page = 0;
+		current_column = 0;
 	}
 	else
 	{
 		//Restart column and page to zero (reset)
-		record_time = RECORD_FIVE_SECOND;
+		record_time = RECORD_DEMO_TIME;
 		current_column = 0x0;
 		current_page = FLASH_DATA_PAGE_START;
-		flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
-		flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
+		//flash_write_data32_direct(current_page, FLASH_LAST_PAGE, FLASH_PARAM_PAGE);
+		//flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
 	}
-#
+
 
   /*Initialize Structure to hold recorded data*/
   recorded_data new_data;
@@ -304,6 +316,9 @@ int main(void){
   new_data.temp = 0xDEADBEEF;
   new_data.measureNum = 0;
 
+  recorded_data offload;
+  recorded_data * offload_ptr = &offload;
+
   //Trigger a SR
   SR_toggle();
 
@@ -313,26 +328,57 @@ int main(void){
   //Infinite loop
    while(1){
 	  packet_handler();
-	 if(readFlag == 1){
-		 	mux_select(1);
+	 if(readFlag && running_flag){
+
+		new_data.xaxis = 0x0;
+		new_data.yaxis = 0x0;
+		new_data.zaxis = 0x0;
+		new_data.count = 0x0;
+
+		uint32_t xread = 0x0;
+		uint32_t yread = 0x0;
+		uint32_t zread = 0x0;
+
+
+		uint32_t read;
+		uint32_t count = 1;
+
+		 for(int z = 0; z < AVERAGE_NUM; z++)
+		 {
+
+			mux_select(1);
 			adc_configure_channels();
-			uint32_t xread = adc_read_data();
+			read = adc_read_data();
+			if (new_data.xaxis > (new_data.xaxis + read))
+				break;
+			xread = read + new_data.xaxis;
 
 			mux_select(3);
 			adc_configure_channels();
-			uint32_t zread = adc_read_data();
+			read = adc_read_data();
+			if (new_data.zaxis > (new_data.zaxis + read))
+				break;
+			zread = read + new_data.zaxis;
 
 			mux_select(2);
 			adc_configure_channels();
-			uint32_t yread = adc_read_data();
-
-			adc_configure_channels();
-			uint32_t tempread = adc_read_temperature();
+			read = adc_read_data();
+			if (new_data.yaxis > (new_data.yaxis + read))
+				break;
+			yread = read + new_data.yaxis;
 
 			//Store measurements
 			new_data.xaxis = xread;
 			new_data.yaxis = yread;
 			new_data.zaxis = zread;
+			count++;
+		 }
+		 new_data.count = count;
+
+		 	//Read temperature
+			adc_configure_channels();
+			uint32_t tempread = adc_read_temperature();
+
 			new_data.temp = tempread;
 			new_data.measureNum = measurementCount;
 			measurementCount++;
@@ -343,44 +389,41 @@ int main(void){
 			printf("\r\n z = %f V", adc_calculate_float(data_ptr->zaxis));
 			printf("\r\n Temperature = %.3f C    .", adc_calculate_float_temp(data_ptr->temp));
 
-			readFlag = 0;
-			NVIC_EnableIRQ(LETIMER0_IRQn);
 
 			 switch(operation_mode){
 				 case MODE_FIELD:			//store data
 					printf("\r\nFIELD");
-					 //GPIO_PinOutToggle(LED_POWER_PORT, LED_POWER_PIN);
 #ifdef CMS
-					 flash_write_data32(data_ptr->measureNum, &current_column, &current_page);
-					 flash_write_data32(data_ptr->xaxis, &current_column, &current_page);
-					 flash_write_data32(data_ptr->yaxis, &current_column, &current_page);
-					 flash_write_data32(data_ptr->zaxis, &current_column, &current_page);
-					 flash_write_data32(data_ptr->temp, &current_column, &current_page);
+//					if(current_page < 65536){
+//						flash_write_data32(data_ptr, &current_column, &current_page);
+//						current_page = current_page + (uint16_t)64;
+//					}
+					if(holding_index < 500){
+						holding[holding_index] = new_data;
+						holding_index++;
+					}
 #endif
-					 //sendData(data_ptr);
 					 break;
 				 case MODE_DEMO:			//send data and forget it
 					 printf("\r\nDEMO");
-					 NVIC_DisableIRQ(LETIMER0_IRQn);
-					 //GPIO_PinOutToggle(LED_BLE_PORT, LED_BLE_PIN);
 					 sendData(data_ptr);
-					 NVIC_EnableIRQ(LETIMER0_IRQn);
 					 break;
 			 }
+				readFlag = 0;
+				NVIC_EnableIRQ(LETIMER0_IRQn);
 	 }
 
 	 switch(user_flag){
 	 	 case USER_FLAG_CLEAR:
 	 		NVIC_DisableIRQ(LETIMER0_IRQn);
-	 		//CLEAR_DATA();
+	 		CLEAR_DATA();
 	 		printf("\n\rClear selected");
 	 		user_flag = USER_FLAG_NOP;
 	 		NVIC_EnableIRQ(LETIMER0_IRQn);
-	 		//GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
 	 		break;
 	 	 case USER_FLAG_OFFLOAD:
-		 	NVIC_DisableIRQ(LETIMER0_IRQn);
-		 	//OFFLOAD_DATA();
+	 		NVIC_DisableIRQ(LETIMER0_IRQn);
+		 	OFFLOAD_DATA();
 		 	printf("\n\rOffload selected");
 		 	user_flag = USER_FLAG_NOP;
 		 	NVIC_EnableIRQ(LETIMER0_IRQn);

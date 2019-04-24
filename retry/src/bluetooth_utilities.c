@@ -83,6 +83,10 @@ PACKSTRUCT(struct clear_t{
 	int clear;
 });
 
+PACKSTRUCT(struct time_in_t{
+	uint32_t time;
+});
+
 
 
 void sendData(recorded_data * data_ptr)
@@ -93,13 +97,11 @@ void sendData(recorded_data * data_ptr)
 	uint32_t zread = data_ptr->zaxis;
 	uint32_t temp  = data_ptr->temp;
 	uint32_t measureNum = data_ptr->measureNum;
+	uint32_t count = data_ptr->count;
 
 	uint8_t flag = 0xff;
-	uint8_t tempBuffer[40];//should be 40
+	uint8_t tempBuffer[48];
 	uint8_t *p = tempBuffer;
-
-	UINT32_TO_BITSTREAM(p, measureNum);
-	UINT8_TO_BITSTREAM(p, flag);
 
 	UINT32_TO_BITSTREAM(p, xread);
 	UINT8_TO_BITSTREAM(p, flag);
@@ -113,10 +115,13 @@ void sendData(recorded_data * data_ptr)
 	UINT32_TO_BITSTREAM(p, temp);
 	UINT8_TO_BITSTREAM(p, flag);
 
+	UINT32_TO_BITSTREAM(p, measureNum);
+	UINT8_TO_BITSTREAM(p, flag);
 
+	UINT32_TO_BITSTREAM(p, count);
 
 	 gecko_cmd_gatt_server_send_characteristic_notification(
-	      0xFF, gattdb_Data, 40 , tempBuffer);
+	      0xFF, gattdb_Data, 24 , tempBuffer);
 }
 
 void packet_handler(){
@@ -184,25 +189,32 @@ void packet_handler(){
 		case gecko_evt_gatt_server_attribute_value_id:
 			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_mode)
 			    {
-			    struct mode_t* mode_bit = (struct mode_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
-
-			    if(operation_mode == MODE_FIELD){
-			    	operation_mode = MODE_DEMO;
-			    	record_time = RECORD_FIVE_SECOND;
-			    }
-			    else{
-			    	operation_mode = MODE_FIELD;
-			    	record_time = RECORD_ONE_MINUTE;
-			    }
+					if(operation_mode == MODE_FIELD){
+						operation_mode = MODE_DEMO;
+						record_time = RECORD_DEMO_TIME;
+					}
+					else{
+						operation_mode = MODE_FIELD;
+						record_time = RECORD_FIELD_TIME;
+						current_column = (uint16_t) flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_COLUMN);
+						current_page = (uint16_t) flash_read_data(FLASH_PARAM_PAGE, FLASH_LAST_PAGE);
+					}
 			   }
 			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_offload)
-			    {
-				 user_flag = USER_FLAG_OFFLOAD;
-			    }
+			 {
+				user_flag = USER_FLAG_OFFLOAD;
+			 }
 			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_ClearMem)
 			 {
 				 user_flag = USER_FLAG_CLEAR;
-				 //GPIO_PinOutClear(LED_BLE_PORT, LED_BLE_PIN);
+			 }
+			 if(evt->data.evt_gatt_server_attribute_value.attribute == gattdb_Recording)
+			 {
+				 struct time_in_t* time_in = (struct time_in_t*)(evt->data.evt_gatt_server_attribute_value.value.data);
+				 running_flag = 1;
+				 time_start = time_in->time;
+				 printf("\r\nTime = %08x", time_start);
+				 flash_write_data32_direct((uint32_t)time_start, FLASH_START_TIME, FLASH_PARAM_PAGE);
 			 }
 			  break;
 
