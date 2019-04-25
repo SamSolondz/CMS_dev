@@ -47,6 +47,7 @@
 #define RECORD_FIELD_TIME							(60 * 32768)//1966080
 #define RECORD_DEMO_TIME							(1 * 32768) // 32768 = 1 sec
 #define PULSE_HIGH									(3 * 32768)
+#
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
@@ -75,6 +76,7 @@ int running_flag = 0;
 uint16_t current_page = 0x00;
 uint16_t current_column = 0;
 uint32_t measurementCount = 1;
+uint32_t demoCount = 1;
 
 uint32_t time_start = 0;
 uint32_t b = 0x1;
@@ -199,11 +201,11 @@ void OFFLOAD_DATA(){
 
 	recorded_data offload;
 	recorded_data * offload_ptr = &offload;
-	uint16_t read_page = FLASH_DATA_PAGE_START;
-	uint16_t read_column = 0x00;
+	//uint16_t read_page = FLASH_DATA_PAGE_START;
+	//uint16_t read_column = 0x00;
 
 	int j = 0;
-	while(j <= holding_index){
+	while(j < holding_index && (holding_index > 0)){
 
 //		offload.xaxis = flash_read_data(read_page, 0x00);
 //		offload.yaxis = flash_read_data(read_page, 0x04);
@@ -213,11 +215,11 @@ void OFFLOAD_DATA(){
 
 		offload = holding[j];
 
-		USTIMER_Delay(300000);
+		USTIMER_Delay(500000);
 		GPIO_PinOutClear(LED_BLE_PORT, LED_BLE_PIN);
 		packet_handler();
 		sendData(offload_ptr);
-		USTIMER_Delay(300000);
+		USTIMER_Delay(500000);
 		GPIO_PinOutSet(LED_BLE_PORT, LED_BLE_PIN);
 
 		j++;
@@ -235,6 +237,7 @@ void CLEAR_DATA() {
 
 	holding_index = 0;
 	measurementCount = 1;
+
 
 
 
@@ -333,6 +336,7 @@ int main(void){
 		new_data.xaxis = 0x0;
 		new_data.yaxis = 0x0;
 		new_data.zaxis = 0x0;
+		new_data.measureNum = 0x0;
 		new_data.count = 0x0;
 
 		uint32_t xread = 0x0;
@@ -380,8 +384,14 @@ int main(void){
 			uint32_t tempread = adc_read_temperature();
 
 			new_data.temp = tempread;
-			new_data.measureNum = measurementCount;
-			measurementCount++;
+			if(MODE_FIELD){
+				new_data.measureNum = measurementCount;
+				measurementCount++;
+			}
+			else{
+				new_data.measureNum = demoCount;
+				demoCount++;
+			}
 
 			printf("\n\n\r ---Read #%lu---", measurementCount);
 			printf("\r\n x = %f V", adc_calculate_float(data_ptr->xaxis));
@@ -411,6 +421,7 @@ int main(void){
 			 }
 				readFlag = 0;
 				NVIC_EnableIRQ(LETIMER0_IRQn);
+
 	 }
 
 	 switch(user_flag){
