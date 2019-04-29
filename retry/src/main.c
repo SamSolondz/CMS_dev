@@ -44,7 +44,7 @@
 #define	DATABUFFER_SIZE  4
 #define ONE_MILLISECOND_BASE_VALUE_COUNT            1000
 #define ONE_SECOND_TIMER_COUNT                      13672
-#define RECORD_FIELD_TIME							(60 * 32768)//1966080
+#define RECORD_FIELD_TIME							(1 * 32768)//(60 * 32768)//1966080
 #define RECORD_DEMO_TIME							(1 * 32768) // 32768 = 1 sec
 #define PULSE_HIGH									(3 * 32768)
 #define SR_TIME										(60 * 30 * 32768)
@@ -86,6 +86,11 @@ int holding_index = 0;
 
 int SR_flag = 0;
 uint32_t SR_counter = 0;
+
+uint32_t x_arr[60];
+uint32_t y_arr[60];
+uint32_t z_arr[60];
+int samples_index = 0;
 
 
 uint8_t bluetooth_stack_heap[DEFAULT_BLUETOOTH_HEAP(MAX_CONNECTIONS)];
@@ -250,9 +255,6 @@ void CLEAR_DATA() {
 	holding_index = 0;
 	measurementCount = 1;
 
-
-
-
 //	uint16_t erase_page = FLASH_DATA_PAGE_START;
 
 //	while(erase_page <= current_page){
@@ -269,6 +271,228 @@ void CLEAR_DATA() {
 	//flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
 
 };
+
+// Merges two subarrays of arr[].
+// First subarray is arr[l..m]
+// Second subarray is arr[m+1..r]
+void x_merge(uint32_t x_arr[], int l, int m, int r)
+{
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 =  r - m;
+
+    /* create temp arrays */
+    uint32_t L[n1], R[n2];
+
+    /* Copy data to temp arrays L[] and R[] */
+    for (i = 0; i < n1; i++)
+        L[i] = x_arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = x_arr[m + 1+ j];
+
+    /* Merge the temp arrays back into arr[l..r]*/
+    i = 0; // Initial index of first subarray
+    j = 0; // Initial index of second subarray
+    k = l; // Initial index of merged subarray
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            x_arr[k] = L[i];
+            i++;
+        }
+        else
+        {
+            x_arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    /* Copy the remaining elements of L[], if there
+       are any */
+    while (i < n1)
+    {
+        x_arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    /* Copy the remaining elements of R[], if there
+       are any */
+    while (j < n2)
+    {
+        x_arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+/* l is for left index and r is right index of the
+   sub-array of arr to be sorted */
+void x_mergeSort(uint32_t x_arr[], int l, int r)
+{
+    if (l < r)
+    {
+        // Same as (l+r)/2, but avoids overflow for
+        // large l and h
+        int m = l+(r-l)/2;
+
+        // Sort first and second halves
+        x_mergeSort(x_arr, l, m);
+        x_mergeSort(x_arr, m+1, r);
+
+        x_merge(x_arr, l, m, r);
+    }
+}
+
+// Merges two subarrays of arr[].
+// First subarray is arr[l..m]
+// Second subarray is arr[m+1..r]
+void y_merge(uint32_t y_arr[], int l, int m, int r)
+{
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 =  r - m;
+
+    /* create temp arrays */
+    uint32_t L[n1], R[n2];
+
+    /* Copy data to temp arrays L[] and R[] */
+    for (i = 0; i < n1; i++)
+        L[i] = y_arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = y_arr[m + 1+ j];
+
+    /* Merge the temp arrays back into arr[l..r]*/
+    i = 0; // Initial index of first subarray
+    j = 0; // Initial index of second subarray
+    k = l; // Initial index of merged subarray
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            y_arr[k] = L[i];
+            i++;
+        }
+        else
+        {
+            y_arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    /* Copy the remaining elements of L[], if there
+       are any */
+    while (i < n1)
+    {
+        y_arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    /* Copy the remaining elements of R[], if there
+       are any */
+    while (j < n2)
+    {
+        y_arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+/* l is for left index and r is right index of the
+   sub-array of arr to be sorted */
+void y_mergeSort(uint32_t y_arr[], int l, int r)
+{
+    if (l < r)
+    {
+        // Same as (l+r)/2, but avoids overflow for
+        // large l and h
+        int m = l+(r-l)/2;
+
+        // Sort first and second halves
+        y_mergeSort(y_arr, l, m);
+        y_mergeSort(y_arr, m+1, r);
+
+        y_merge(y_arr, l, m, r);
+    }
+}
+
+// Merges two subarrays of arr[].
+// First subarray is arr[l..m]
+// Second subarray is arr[m+1..r]
+void z_merge(uint32_t z_arr[], int l, int m, int r)
+{
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 =  r - m;
+
+    /* create temp arrays */
+    uint32_t L[n1], R[n2];
+
+    /* Copy data to temp arrays L[] and R[] */
+    for (i = 0; i < n1; i++)
+        L[i] = z_arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = z_arr[m + 1+ j];
+
+    /* Merge the temp arrays back into arr[l..r]*/
+    i = 0; // Initial index of first subarray
+    j = 0; // Initial index of second subarray
+    k = l; // Initial index of merged subarray
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            z_arr[k] = L[i];
+            i++;
+        }
+        else
+        {
+            z_arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    /* Copy the remaining elements of L[], if there
+       are any */
+    while (i < n1)
+    {
+        z_arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    /* Copy the remaining elements of R[], if there
+       are any */
+    while (j < n2)
+    {
+        z_arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+/* l is for left index and r is right index of the
+   sub-array of arr to be sorted */
+void z_mergeSort(uint32_t z_arr[], int l, int r)
+{
+    if (l < r)
+    {
+        // Same as (l+r)/2, but avoids overflow for
+        // large l and h
+        int m = l+(r-l)/2;
+
+        // Sort first and second halves
+        z_mergeSort(z_arr, l, m);
+        z_mergeSort(z_arr, m+1, r);
+
+        z_merge(z_arr, l, m, r);
+    }
+}
 
 
 int main(void){
@@ -392,14 +616,14 @@ int main(void){
 		 }
 		 new_data.count = count;
 
-		 	//Read temperature
-			adc_configure_channels();
-			uint32_t tempread = adc_read_temperature();
+		 //Read temperature
+		adc_configure_channels();
+		uint32_t tempread = adc_read_temperature();
 
 			new_data.temp = tempread;
 			if(MODE_FIELD){
 				new_data.measureNum = measurementCount;
-				measurementCount++;
+				//measurementCount++;
 			}
 			else{
 				new_data.measureNum = demoCount;
@@ -421,10 +645,36 @@ int main(void){
 //						flash_write_data32(data_ptr, &current_column, &current_page);
 //						current_page = current_page + (uint16_t)64;
 //					}
-					if(holding_index < 500){
+
+					if(samples_index == 60 && holding_index < 500){
+						//Average the medians after 60 samples and store to struct
+						x_mergeSort(x_arr, 0, (sizeof(x_arr)/sizeof(x_arr[0])) -  1);
+						y_mergeSort(y_arr, 0, (sizeof(y_arr)/sizeof(y_arr[0])) -  1);
+						z_mergeSort(z_arr, 0, (sizeof(z_arr)/sizeof(z_arr[0])) -  1);
+
+						new_data.xaxis = x_arr[30];
+						new_data.yaxis = y_arr[30];
+						new_data.zaxis = z_arr[30];
+						new_data.measureNum = measurementCount;
+
+						measurementCount++;
+
+
+
+						samples_index = 0;
 						holding[holding_index] = new_data;
 						holding_index++;
+
+
+						sendData(data_ptr);
 					}
+					else{
+						x_arr[samples_index] = new_data.xaxis;
+						y_arr[samples_index] = new_data.yaxis;
+						z_arr[samples_index] = new_data.zaxis;
+						samples_index++;
+					}
+
 #endif
 					 break;
 				 case MODE_DEMO:			//send data and forget it

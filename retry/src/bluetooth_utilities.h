@@ -35,7 +35,7 @@
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
-#define RECORD_FIELD_TIME							(60 * 32768)//1966080
+#define RECORD_FIELD_TIME							(1 * 32768)//(60 * 32768)//1966080
 #define RECORD_DEMO_TIME							(1 * 32768)
 
 #define USER_FLAG_NOP		0
