@@ -47,7 +47,7 @@
 #define RECORD_FIELD_TIME							(60 * 32768)//1966080
 #define RECORD_DEMO_TIME							(1 * 32768) // 32768 = 1 sec
 #define PULSE_HIGH									(3 * 32768)
-#
+#define SR_TIME										(60 * 30 * 32768)
 
 #define MODE_FIELD	0
 #define MODE_DEMO	1
@@ -83,6 +83,10 @@ uint32_t b = 0x1;
 
 recorded_data holding[500];
 int holding_index = 0;
+
+int SR_flag = 0;
+uint32_t SR_counter = 0;
+
 
 uint8_t bluetooth_stack_heap[DEFAULT_BLUETOOTH_HEAP(MAX_CONNECTIONS)];
 // Gecko configuration parameters (see gecko_configuration.h)
@@ -178,10 +182,10 @@ void mux_select(int select){
 
 void SR_toggle()
 {
-	  int i = 0;
-	  GPIO_PinOutSet(SR_PORT, SR_PIN);
-	  for (i = 0; i < 100000; i++){}
 	  GPIO_PinOutClear(SR_PORT, SR_PIN);
+	  USTIMER_Delay(3000000);
+	  GPIO_PinOutSet(SR_PORT, SR_PIN);
+
 }
 
 
@@ -193,6 +197,14 @@ void LETIMER0_IRQHandler(void) {
 		else{
 			readFlag = 1;
 			ms_counter = 0;
+			NVIC_DisableIRQ(LETIMER0_IRQn);
+		}
+
+		if(SR_counter < SR_TIME)
+			SR_counter++;
+		else{
+			SR_flag = 1;
+			SR_counter = 0;
 			NVIC_DisableIRQ(LETIMER0_IRQn);
 		}
 }
@@ -275,7 +287,7 @@ int main(void){
 	//Set GPIO pins//
 	GPIO_PinModeSet(MUX_POS_PORT, MUX_POS_PIN, gpioModePushPull, 0);	//Pos diff mux
 	GPIO_PinModeSet(MUX_NEG_PORT, MUX_NEG_PIN, gpioModePushPull, 0);	//Neg diff mux
-	GPIO_PinModeSet(SR_PORT, SR_PIN, gpioModePushPull, 0);	//SR pin
+	GPIO_PinModeSet(SR_PORT, SR_PIN, gpioModePushPull, 1);	//SR pin
 
 	GPIO_PinModeSet(LED_POWER_PORT, LED_POWER_PIN, gpioModePushPull, 0);
 	GPIO_PinModeSet(LED_BLE_PORT, LED_BLE_PIN, gpioModePushPull, 0);
@@ -308,6 +320,8 @@ int main(void){
 		//flash_write_data32_direct(current_column, FLASH_LAST_COLUMN, FLASH_PARAM_PAGE);
 	}
 
+	 //Trigger a SR
+	// SR_toggle();
 
   /*Initialize Structure to hold recorded data*/
   recorded_data new_data;
@@ -322,8 +336,7 @@ int main(void){
   recorded_data offload;
   recorded_data * offload_ptr = &offload;
 
-  //Trigger a SR
-  SR_toggle();
+
 
   LETIMER_setup();
   NVIC_EnableIRQ(LETIMER0_IRQn);
@@ -423,6 +436,12 @@ int main(void){
 				NVIC_EnableIRQ(LETIMER0_IRQn);
 
 	 }
+	if(SR_flag)
+	{
+		SR_toggle();
+		SR_flag = 0;
+		NVIC_EnableIRQ(LETIMER0_IRQn);
+	}
 
 	 switch(user_flag){
 	 	 case USER_FLAG_CLEAR:
